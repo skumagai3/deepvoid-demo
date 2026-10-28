@@ -219,7 +219,7 @@ Colab, so its numbers aren't directly comparable with the paper's. The main diff
 - Resolution: the same 205 h⁻¹ Mpc box on a 128³ grid (1.6 h⁻¹ Mpc voxels) instead of 512³ (0.4 h⁻¹ Mpc
   voxels), so 64 times fewer voxels to train on. Walls and filaments are only a few voxels thick at this
   resolution, which makes their boundaries harder to get exactly right.
-- Model size: a 1.4 million parameter U-Net (3 levels, 16 base filters), smaller than the architectures
+- Model size: a 1.4 million parameter U-Net (depth 4, counting the bottleneck, with 16 base filters), smaller than the architectures
   in the paper.
 - Tuning: I only compared input normalizations and overlapping subcubes, and picked the best on the
   validation set, so the published validation scores are slightly optimistic.

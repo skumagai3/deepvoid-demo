@@ -144,7 +144,7 @@ viz.show_split(ax, mask, split, index=x_mid); plt.show()
     md("""
 ## 2. Predict the full box with the dark matter model
 
-The model is a 3D U-Net (3 resolution levels, 16 → 128 filters, about 1.4 M parameters) trained on the
+The model is a 3D U-Net (depth 4, counting the bottleneck; 16 → 128 filters, about 1.4 M parameters) trained on the
 augmented 32³ training subcubes. The input scaling (min-max by default; the training notebook explains the
 alternatives) is fitted on the training voxels and saved with the model.
 
