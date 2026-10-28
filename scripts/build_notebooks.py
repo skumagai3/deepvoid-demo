@@ -67,7 +67,7 @@ DEMO = [
 
 This notebook runs trained DeepVoid models end to end, in a few minutes, and a CPU is fine:
 
-1. load a 128³ cube from the IllustrisTNG TNG300-3-Dark simulation (205 h⁻¹ Mpc on a side),
+1. load the full IllustrisTNG TNG300-3-Dark simulation box (205 h⁻¹ Mpc on a side) on a 128³ grid,
 2. classify every one of its 2.1 million voxels as void, wall, filament or halo,
 3. compare the prediction with the ground truth on validation subcubes the model never trained on,
 4. repeat with only the galaxies as input, which is closer to what a galaxy survey sees.
@@ -241,7 +241,7 @@ plt.show()
 * This is a scaled-down version of the method. The full-scale results (Kumagai et al., ApJ 2026) are
   void F1 = 0.96 for dark matter at λ = 0.33 h⁻¹ Mpc and void F1 = 0.89 for galaxies at λ = 10 h⁻¹ Mpc.
   To fit in a repo and train in minutes, this demo uses a 4× coarser grid (1.6 instead of 0.4 h⁻¹ Mpc
-  voxels), 64× less data, a small U-Net and very little tuning, so its numbers aren't directly
+  voxels, so 64× fewer voxels), a small U-Net and very little tuning, so its numbers aren't directly
   comparable. The README has more detail.
 * The curriculum is simplified. The demo goes from dark matter (λ = 0.33) straight to galaxies at
   λ = 7 h⁻¹ Mpc in one step. The paper's best scheme is two-step (λ = 0.33 → 3 → 10 h⁻¹ Mpc) on much

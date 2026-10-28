@@ -1,6 +1,6 @@
 # Data card: `data/tng300_128.npz`
 
-This file is a 128³ sample of the IllustrisTNG TNG300-3-Dark simulation at redshift zero. It's small enough
+This file is the full IllustrisTNG TNG300-3-Dark simulation box at redshift zero, downsampled to a 128³ grid. It's small enough
 to keep in the repo (4.5 MB) and large enough to train and evaluate the demo models. It was made with
 [`scripts/prepare_sample.py`](scripts/prepare_sample.py) from three `.fvol` volumes I produced during the
 DeepVoid project in 2024.

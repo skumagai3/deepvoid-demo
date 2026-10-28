@@ -18,8 +18,8 @@ DeepVoid is a 3D U-Net that labels every voxel of a cosmological simulation as v
 halo. It was the main project of my PhD in physics at Drexel (2026) and is published in
 *The Astrophysical Journal* ([Kumagai et al. 2026](https://doi.org/10.3847/1538-4357/ae2c80)).
 
-This repo is a scaled-down version that runs in Colab in a few minutes. It includes trained weights, a
-small sample of the public [IllustrisTNG](https://www.tng-project.org/) TNG300-3-Dark simulation
+This repo is a scaled-down version that runs in Colab in a few minutes. It includes trained weights, the
+full public [IllustrisTNG](https://www.tng-project.org/) TNG300-3-Dark simulation box downsampled to a 128³ grid
 (see [Simulation data](#simulation-data-illustristng) below), and a notebook that goes from a density
 field to scored predictions.
 
@@ -87,8 +87,8 @@ The network only ever sees the density field and has to learn to reproduce these
 
 A few things make this harder than it might look:
 
-- The data is 3D and large. The demo box is 128³ (2.1 million voxels) and the paper used 512³
-  (134 million). Training is done on 32³ subcubes, and predictions for the full box are stitched together
+- The data is 3D and large. The demo puts the whole box on a 128³ grid (2.1 million voxels), and the
+  paper used 512³ (134 million). Training is done on 32³ subcubes, and predictions for the full box are stitched together
   from overlapping windows so there are no seams.
 - The classes are very unbalanced: voids are 62% of the volume and halos 0.5%. Predicting "void"
   everywhere would already give 62% accuracy, so I report void F1 and the multiclass Matthews
@@ -200,11 +200,11 @@ the one with the highest mean validation MCC across the three trained models (se
 ### The full-scale results
 
 The full version of this work is in [Kumagai et al. 2026](https://doi.org/10.3847/1538-4357/ae2c80). On
-the full 512³ TNG box, DeepVoid reaches void F1 = 0.96 on dark matter at λ = 0.33 h⁻¹ Mpc, and void
+the TNG box on a 512³ grid, DeepVoid reaches void F1 = 0.96 on dark matter at λ = 0.33 h⁻¹ Mpc, and void
 F1 = 0.89 on galaxies at λ = 10 h⁻¹ Mpc, which is about 28,000 times fewer tracers than the dark matter.
 
 <p align="center">
-  <img src="assets/paper_512.png" width="860" alt="Figure from the paper: a slice of the full 512³ TNG box showing the dark matter density, the prediction from dark matter at λ = 0.33 h⁻¹ Mpc, the T-web classification, the galaxies within ±2 h⁻¹ Mpc of the slice, and the prediction from galaxies at λ = 10 h⁻¹ Mpc">
+  <img src="assets/paper_512.png" width="860" alt="Figure from the paper: a slice of the TNG box on a 512³ grid showing the dark matter density, the prediction from dark matter at λ = 0.33 h⁻¹ Mpc, the T-web classification, the galaxies within ±2 h⁻¹ Mpc of the slice, and the prediction from galaxies at λ = 10 h⁻¹ Mpc">
 </p>
 
 <p align="center"><em>
@@ -216,9 +216,9 @@ galaxies alone at λ = 10 h⁻¹ Mpc.
 This demo is scaled down so the data fits in a GitHub repo and every model trains in a few minutes on
 Colab, so its numbers aren't directly comparable with the paper's. The main differences:
 
-- Resolution: 128³ voxels of 1.6 h⁻¹ Mpc instead of 512³ voxels of 0.4 h⁻¹ Mpc. Walls and filaments are
-  only a few voxels thick at this resolution, which makes their boundaries harder to get exactly right.
-- Data: the demo box has 2.1 million voxels, 64 times fewer than the 134 million in the full box.
+- Resolution: the same 205 h⁻¹ Mpc box on a 128³ grid (1.6 h⁻¹ Mpc voxels) instead of 512³ (0.4 h⁻¹ Mpc
+  voxels), so 64 times fewer voxels to train on. Walls and filaments are only a few voxels thick at this
+  resolution, which makes their boundaries harder to get exactly right.
 - Model size: a 1.4 million parameter U-Net (3 levels, 16 base filters), smaller than the architectures
   in the paper.
 - Tuning: I only compared input normalizations and overlapping subcubes, and picked the best on the
