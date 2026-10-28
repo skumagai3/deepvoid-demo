@@ -50,7 +50,7 @@ print("working in", os.getcwd())
 MODELS_TABLE = """
 | Model | Trained on | Applied to | What it tests |
 |---|---|---|---|
-| `dm_model` | dark matter (λ = 0.33 h⁻¹ Mpc) | dark matter | the basic task, with the full matter field as input |
+| `dm_model` | dark matter (λ = 0.33 h⁻¹ Mpc) | dark matter | the basic task, with the dark matter density field as input |
 | `subhalo_no_retraining` | dark matter | galaxies (λ = 7 h⁻¹ Mpc) | does a dark-matter model work on sparse tracers as-is? (input rescaled, weights unchanged) |
 | `subhalo_from_scratch` | galaxies | galaxies | training directly on the sparse field, starting from random weights |
 | `subhalo_curriculum` | dark matter, then galaxies | galaxies | one-step curriculum learning: start from `dm_model`, freeze its first encoder block, fine-tune on galaxies |
@@ -101,7 +101,7 @@ print("TensorFlow", tf.__version__, "| GPU:", tf.config.list_physical_devices("G
 
 The sample is 4.5 MB: two input fields and the label cube, all on the same 128³ grid (1.6 h⁻¹ Mpc voxels).
 
-* Dark matter: the full matter density, sampled by particles 0.33 h⁻¹ Mpc apart. Lots of detail, but not something we can observe.
+* Dark matter: the dark matter density, sampled by particles 0.33 h⁻¹ Mpc apart. Lots of detail, but not something we can observe.
 * Galaxies at λ = 7 h⁻¹ Mpc. This simulation only contains dark matter, so the galaxies are its subhalos:
   the small, dense clumps of dark matter where galaxies would form. They're close enough that I call them
   galaxies (the code and file names say `subhalo`). They're thinned to a mean separation of 7 h⁻¹ Mpc, about
@@ -202,7 +202,7 @@ def browse(x):
 ## 3. Sparse galaxies (λ = 7 h⁻¹ Mpc)
 
 Real surveys see galaxies, not dark matter. Here the input is only the galaxy field, but the target is
-still the T-web of the full matter distribution. I compare three ways to handle it, alongside the
+still the T-web computed from the dark matter. I compare three ways to handle it, alongside the
 dark matter model from section 2:
 
 {MODELS_TABLE}

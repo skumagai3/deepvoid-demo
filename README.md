@@ -93,7 +93,7 @@ A few things make this harder than it might look:
   everywhere would already give 62% accuracy, so I report void F1 and the multiclass Matthews
   correlation coefficient (MCC) instead.
 - Real surveys see galaxies, not dark matter. Galaxies are a sparse and biased sample of the underlying
-  matter, so the more realistic task is to recover the web of the full matter field from galaxies
+  matter, so the more realistic task is to recover the web traced by the dark matter from galaxies
   alone. TNG300-3-Dark only contains dark matter, so for galaxies I use its subhalos, the small, dense
   clumps of dark matter where galaxies would form. They're a close enough stand-in that I call them
   galaxies here (the model and file names still say "subhalo"). Thinned to 7 h⁻¹ Mpc apart, 93% of
@@ -110,7 +110,7 @@ A few things make this harder than it might look:
 
 | Model | Trained on | Applied to | What it tests |
 |---|---|---|---|
-| `dm_model` | dark matter (λ = 0.33 h⁻¹ Mpc) | dark matter | the basic task, using the full matter field |
+| `dm_model` | dark matter (λ = 0.33 h⁻¹ Mpc) | dark matter | the basic task, using the dark matter density field |
 | `subhalo_no_retraining` | dark matter | galaxies (λ = 7 h⁻¹ Mpc) | whether a dark matter model works on sparse tracers without retraining (inputs rescaled, weights unchanged) |
 | `subhalo_from_scratch` | galaxies | galaxies | training directly on the sparse field from random weights |
 | `subhalo_curriculum` | dark matter, then galaxies | galaxies | one-step curriculum: start from `dm_model`, freeze its first encoder block, fine-tune on galaxies (the paper uses two steps, see below) |
