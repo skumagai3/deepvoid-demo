@@ -306,7 +306,7 @@ curriculum, attention and FiLM).
 @ARTICLE{2026ApJ...998...85K,
        author = {{Kumagai}, Sam and {Vogeley}, Michael S. and {Aragon-Calvo}, Miguel A. and {Douglass}, Kelly A. and {BenZvi}, Segev and {Neyrinck}, Mark},
         title = "{DeepVoid: A Deep Learning Void Detector}",
-      journal = {\apj},
+      journal = {The Astrophysical Journal},
      keywords = {Voids, Cosmic web, Large-scale structure of the universe, Cosmology, Convolutional neural networks, Instrumentation and Methods for Astrophysics},
          year = 2026,
         month = feb,
