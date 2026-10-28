@@ -344,9 +344,8 @@ If you use these data, please follow the [TNG data access terms](https://www.tng
 the IllustrisTNG introductory papers and the data release paper:
 
 - Springel, V., et al. 2018, MNRAS, 475, 676 ([doi:10.1093/mnras/stx3304](https://doi.org/10.1093/mnras/stx3304))
-- Pillepich, A., et al. 2018, MNRAS, 475, 648
-- Nelson, D., et al. 2018, MNRAS, 475, 624
-- Naiman, J. P., et al. 2018, MNRAS, 477, 1206
-- Marinacci, F., et al. 2018, MNRAS, 480, 5113
-- Nelson, D., et al. 2019, Computational Astrophysics and Cosmology, 6, 2 (public data release;
-  [doi:10.1186/s40668-019-0028-x](https://doi.org/10.1186/s40668-019-0028-x))
+- Pillepich, A., et al. 2018, MNRAS, 475, 648 ([doi:10.1093/mnras/stx3112](https://doi.org/10.1093/mnras/stx3112))
+- Nelson, D., et al. 2018, MNRAS, 475, 624 ([doi:10.1093/mnras/stx3040](https://doi.org/10.1093/mnras/stx3040))
+- Naiman, J. P., et al. 2018, MNRAS, 477, 1206 ([doi:10.1093/mnras/sty618](https://doi.org/10.1093/mnras/sty618))
+- Marinacci, F., et al. 2018, MNRAS, 480, 5113 ([doi:10.1093/mnras/sty2206](https://doi.org/10.1093/mnras/sty2206))
+- Nelson, D., et al. 2019, Computational Astrophysics and Cosmology, 6, 2 ([doi:10.1186/s40668-019-0028-x](https://doi.org/10.1186/s40668-019-0028-x)), the public data release
