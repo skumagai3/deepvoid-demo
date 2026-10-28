@@ -172,26 +172,11 @@ the one with the highest mean validation MCC across the three trained models (se
 on a Colab GPU.
 </details>
 
-### Why these scores are lower than the paper's
+### The full-scale results
 
-The demo numbers aren't the paper's results and shouldn't be compared with them directly. The paper
-([Kumagai et al. 2026](https://doi.org/10.3847/1538-4357/ae2c80)) reports void F1 = 0.96 on dark matter at
-λ = 0.33 h⁻¹ Mpc and void F1 = 0.89 on subhalos at λ = 10 h⁻¹ Mpc (about 27,000 times fewer tracers than the
-dark matter), with both direct training and the two-step curriculum. To make the demo small enough for a
-GitHub repo and fast enough to train in minutes, I cut several corners, and each one costs some accuracy:
-
-- The grid is 4 times coarser: 128³ voxels of 1.6 h⁻¹ Mpc instead of 512³ voxels of 0.4 h⁻¹ Mpc. Walls and
-  filaments are thin, so at this resolution many are only a few voxels across, and a one-voxel error at a
-  boundary is a big fraction of the structure.
-- There is 64 times less data. The demo box has 2.1 million voxels, and training uses 51 subcubes
-  (1.7 million voxels before rotations). The paper trained on a 512³ box with 134 million voxels.
-- The network is small: 1.4 million parameters (3 levels, 16 base filters), compared with the larger
-  architectures in the paper.
-- There was no real tuning. I only tried different input normalizations and overlapping subcubes, and
-  picked the best on the validation set, which makes the published validation scores slightly optimistic.
-- The validation set is 13 subcubes from one simulation, so there's noticeable sampling noise.
-
-For comparison, here is a figure from the paper showing the full-scale (512³) results:
+The full version of this work is in [Kumagai et al. 2026](https://doi.org/10.3847/1538-4357/ae2c80). On
+the full 512³ TNG300 box, DeepVoid reaches void F1 = 0.96 on dark matter at λ = 0.33 h⁻¹ Mpc, and void
+F1 = 0.89 on subhalos at λ = 10 h⁻¹ Mpc, which is about 27,000 times fewer tracers than the dark matter.
 
 <p align="center">
   <img src="assets/paper_512.png" width="860" alt="Figure from the paper: a slice of the full 512³ TNG300 box showing the dark matter density, the prediction from dark matter at λ = 0.33 h⁻¹ Mpc, the T-web classification, the subhalos within ±2 h⁻¹ Mpc of the slice, and the prediction from subhalos at λ = 10 h⁻¹ Mpc">
@@ -202,6 +187,18 @@ From Kumagai et al. (2026). Top: dark matter density, the prediction from dark m
 and the T-web ground truth. Bottom: subhalos within ±2 h⁻¹ Mpc of the slice, and the prediction from
 subhalos alone at λ = 10 h⁻¹ Mpc.
 </em></p>
+
+This demo is scaled down so the data fit in a GitHub repo and every model trains in a few minutes on
+Colab, so its numbers aren't directly comparable with the paper's. The main differences:
+
+- Resolution: 128³ voxels of 1.6 h⁻¹ Mpc instead of 512³ voxels of 0.4 h⁻¹ Mpc. Walls and filaments are
+  only a few voxels thick at this resolution, which makes their boundaries harder to get exactly right.
+- Data: the demo box has 2.1 million voxels, 64 times fewer than the 134 million in the full box.
+- Model size: a 1.4 million parameter U-Net (3 levels, 16 base filters), smaller than the architectures
+  in the paper.
+- Tuning: I only compared input normalizations and overlapping subcubes, and picked the best on the
+  validation set, so the published validation scores are slightly optimistic.
+- Validation: 13 subcubes from one simulation, so there is some sampling noise.
 
 ## Running it
 

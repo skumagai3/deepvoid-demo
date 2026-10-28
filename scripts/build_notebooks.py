@@ -238,11 +238,11 @@ plt.show()
     md("""
 ## Caveats
 
-* The method is the same as the paper's, but the setting is much smaller, so the scores are lower. The paper (Kumagai et al., ApJ 2026)
-  reports void F1 = 0.96 for dark matter at λ = 0.33 h⁻¹ Mpc and void F1 = 0.89 for subhalos at
-  λ = 10 h⁻¹ Mpc. This demo uses a 4× coarser grid (1.6 instead of 0.4 h⁻¹ Mpc
-  voxels), 64× less data, a small U-Net and no tuning, so that it fits in a repo and trains in minutes.
-  The README goes into this in more detail.
+* This is a scaled-down version of the method. The full-scale results (Kumagai et al., ApJ 2026) are
+  void F1 = 0.96 for dark matter at λ = 0.33 h⁻¹ Mpc and void F1 = 0.89 for subhalos at λ = 10 h⁻¹ Mpc.
+  To fit in a repo and train in minutes, this demo uses a 4× coarser grid (1.6 instead of 0.4 h⁻¹ Mpc
+  voxels), 64× less data, a small U-Net and very little tuning, so its numbers aren't directly
+  comparable. The README has more detail.
 * The curriculum is simplified. The demo goes from dark matter (λ = 0.33) straight to subhalos at
   λ = 7 h⁻¹ Mpc in one step. The paper's best scheme is two-step (λ = 0.33 → 3 → 10 h⁻¹ Mpc) on much
   sparser tracers in voxel terms, which is where pretraining should help most. Even there the gain over
