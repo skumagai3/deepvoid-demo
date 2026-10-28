@@ -99,9 +99,9 @@ Why this is a hard machine learning problem:
   clumps of dark matter where galaxies would form. They're a close enough stand-in that I call them
   galaxies here (the model and file names still say "subhalo"). I keep only the most massive ones, enough
   that they are 7 h⁻¹ Mpc apart on average, much as a survey only sees the brighter galaxies. At that
-  spacing, 93% of voxels contain none. In the paper I used curriculum learning for this: train on dark matter first,
-  then adapt to sparser tracers. The demo compares a simplified, one-step version of that with training
-  on galaxies from scratch.
+  spacing, 93% of voxels contain none. Training directly on such sparse data tends to be unstable, so in the paper I used curriculum
+  learning: train on dark matter first, then adapt to sparser tracers. The demo compares a simplified,
+  one-step version of that with training on galaxies from scratch as a baseline.
 
 ## The model
 
@@ -142,7 +142,7 @@ subcubes are also rotated by 90° to show the network each structure in several 
 |---|---|---|---|
 | `dm_model` | dark matter (λ = 0.33 h⁻¹ Mpc) | dark matter | the basic task, using the dark matter density field |
 | `subhalo_no_retraining` | dark matter | galaxies (λ = 7 h⁻¹ Mpc) | whether a dark matter model works on sparse tracers without retraining (inputs rescaled, weights unchanged) |
-| `subhalo_from_scratch` | galaxies | galaxies | training directly on the sparse field from random weights |
+| `subhalo_from_scratch` | galaxies | galaxies | baseline: training directly on the sparse field from random weights, the approach the curriculum is meant to improve on |
 | `subhalo_curriculum` | dark matter, then galaxies | galaxies | one-step curriculum learning: start from `dm_model`, freeze its first encoder block, fine-tune on galaxies (the paper uses two steps, see below) |
 
 All four are scored against the same T-web labels, which are computed from the full dark matter. For the

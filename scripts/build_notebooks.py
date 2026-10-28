@@ -52,7 +52,7 @@ MODELS_TABLE = """
 |---|---|---|---|
 | `dm_model` | dark matter (λ = 0.33 h⁻¹ Mpc) | dark matter | the basic task, with the dark matter density field as input |
 | `subhalo_no_retraining` | dark matter | galaxies (λ = 7 h⁻¹ Mpc) | does a dark matter model work on sparse tracers as-is? (input rescaled, weights unchanged) |
-| `subhalo_from_scratch` | galaxies | galaxies | training directly on the sparse field, starting from random weights |
+| `subhalo_from_scratch` | galaxies | galaxies | baseline: training directly on the sparse field from random weights, the approach the curriculum is meant to improve on |
 | `subhalo_curriculum` | dark matter, then galaxies | galaxies | one-step curriculum learning: start from `dm_model`, freeze its first encoder block, fine-tune on galaxies |
 
 All four are scored against the same T-web labels (computed from the full dark matter) on the same
