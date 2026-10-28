@@ -97,8 +97,9 @@ Why this is a hard machine learning problem:
   matter, so the more realistic task is to recover the web traced by the dark matter from galaxies
   alone. The TNG run I use only contains dark matter, so for galaxies I use its subhalos, the small, dense
   clumps of dark matter where galaxies would form. They're a close enough stand-in that I call them
-  galaxies here (the model and file names still say "subhalo"). Thinned to 7 h⁻¹ Mpc apart, 93% of
-  voxels contain none. In the paper I used curriculum learning for this: train on dark matter first,
+  galaxies here (the model and file names still say "subhalo"). I keep only the most massive ones, enough
+  that they are 7 h⁻¹ Mpc apart on average, much as a survey only sees the brighter galaxies. At that
+  spacing, 93% of voxels contain none. In the paper I used curriculum learning for this: train on dark matter first,
   then adapt to sparser tracers. The demo compares a simplified, one-step version of that with training
   on galaxies from scratch.
 
@@ -364,8 +365,11 @@ the T-web labels in `data/tng300_128.npz` are all derived from it (see the [data
 A note for astronomers: the "galaxies" in this demo are the simulation's subhalos (bound clumps of dark
 matter identified within halos) rather than true galaxies. A dark-matter-only run has no gas or stars, so subhalos
 aren't a one-to-one match for the galaxies a survey would see, and they don't carry the selection effects
-or galaxy bias of a real sample. For testing whether a network can recover the cosmic web from a sparse
-set of tracers, they're a close enough stand-in.
+or galaxy bias of a real sample. The sparse samples are built by ranking the subhalos by mass and keeping
+the most massive ones until their mean separation reaches the target λ (7 h⁻¹ Mpc here, as in the paper's
+abundance matching). This roughly mimics the luminosity limit of a real survey, though a real limit
+also depends on galaxy properties and changes with distance. For testing whether a network can recover the
+cosmic web from a sparse set of tracers, they're a close enough stand-in.
 
 If you use this data, please follow the [TNG data access terms](https://www.tng-project.org/data/) and cite
 the TNG introductory papers and the data release paper:

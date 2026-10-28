@@ -104,7 +104,7 @@ The sample is 4.5 MB: two input fields and the label cube, all on the same 128³
 * Dark matter: the dark matter density, sampled by particles 0.33 h⁻¹ Mpc apart. Lots of detail, but not something we can observe.
 * Galaxies at λ = 7 h⁻¹ Mpc. This simulation only contains dark matter, so the galaxies are its subhalos:
   the small, dense clumps of dark matter where galaxies would form. They're close enough that I call them
-  galaxies (the code and file names say `subhalo`). They're thinned to a mean separation of 7 h⁻¹ Mpc, about
+  galaxies (the code and file names say `subhalo`). Only the most massive ones are kept, enough for a mean separation of 7 h⁻¹ Mpc, about
   10,000 times fewer tracers than the dark matter, and 93% of voxels are empty, which is much closer to what a galaxy survey sees.
 * Labels: T-web classes computed from the full dark matter, used for both inputs. With the sparse input, the
   network has to infer structure it can't see directly.
