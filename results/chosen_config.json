@@ -1,0 +1,12 @@
+{
+  "chosen": "minmax_overlap",
+  "rule": "highest mean validation MCC of the three trained models",
+  "mean_mcc": {
+    "minmax_overlap": 0.5911279976828857,
+    "log_zscore_overlap": 0.5791113724783084,
+    "log_overlap": 0.5785232567042065,
+    "minmax": 0.5673089842335558,
+    "log_zscore": 0.566860640915404,
+    "log": 0.5519066840649669
+  }
+}
