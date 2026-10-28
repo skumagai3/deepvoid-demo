@@ -19,7 +19,7 @@ halo. It was the main project of my PhD in physics at Drexel (2026) and is publi
 *The Astrophysical Journal* ([Kumagai et al. 2026](https://doi.org/10.3847/1538-4357/ae2c80)).
 
 This repo is a scaled-down version that runs in Colab in a few minutes. It includes trained weights, the
-full public [IllustrisTNG](https://www.tng-project.org/) TNG300-3-Dark simulation box downsampled to a 128³ grid
+full public [IllustrisTNG](https://www.tng-project.org/) TNG300-3-Dark simulation box, gridded onto 128³ voxels
 (see [Simulation data](#simulation-data-illustristng) below), and a notebook that goes from a density
 field to scored predictions.
 
@@ -61,7 +61,7 @@ filament, and along all three into a halo. A region being stretched (or only bar
 direction is a void. The
 tidal tensor measures that squeezing.
 
-To compute it, I put the dark matter particles on a grid to get the density contrast δ = ρ/ρ̄ − 1 and
+To compute it, I assign the dark matter particles to a grid with cloud-in-cell (CIC) interpolation to get the density contrast δ = ρ/ρ̄ − 1 and
 solve Poisson's equation for the gravitational potential Φ. On a periodic grid this is easiest with a
 Fourier transform, where taking derivatives turns into multiplying by the wavevector **k**:
 
