@@ -303,16 +303,23 @@ curriculum, attention and FiLM).
 ## Citation
 
 ```bibtex
-@article{Kumagai2026DeepVoid,
-  author  = {Kumagai, Sam and Vogeley, Michael S. and Aragon-Calvo, Miguel A. and
-             Douglass, Kelly A. and BenZvi, Segev and Neyrinck, Mark},
-  title   = {DeepVoid: A Deep Learning Void Detector},
-  journal = {The Astrophysical Journal},
-  volume  = {998},
-  number  = {1},
-  pages   = {85},
-  year    = {2026},
-  doi     = {10.3847/1538-4357/ae2c80}
+@ARTICLE{2026ApJ...998...85K,
+       author = {{Kumagai}, Sam and {Vogeley}, Michael S. and {Aragon-Calvo}, Miguel A. and {Douglass}, Kelly A. and {BenZvi}, Segev and {Neyrinck}, Mark},
+        title = "{DeepVoid: A Deep Learning Void Detector}",
+      journal = {\apj},
+     keywords = {Voids, Cosmic web, Large-scale structure of the universe, Cosmology, Convolutional neural networks, Instrumentation and Methods for Astrophysics},
+         year = 2026,
+        month = feb,
+       volume = {998},
+       number = {1},
+          eid = {85},
+        pages = {85},
+          doi = {10.3847/1538-4357/ae2c80},
+archivePrefix = {arXiv},
+       eprint = {2504.21134},
+ primaryClass = {astro-ph.IM},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2026ApJ...998...85K},
+      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
 }
 ```
 
