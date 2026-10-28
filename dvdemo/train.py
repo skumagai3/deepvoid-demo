@@ -6,7 +6,7 @@ Three models are trained, plus one comparison without retraining:
 
 * ``dm_model``               trained on the dark-matter field;
 * ``subhalo_curriculum``     ``dm_model`` fine-tuned on the lambda = 7 subhalo field,
-                             first encoder block frozen (one-step curriculum);
+                             first encoder block frozen (one-step curriculum learning);
 * ``subhalo_from_scratch``   a fresh model on the subhalo field, same settings;
 * ``subhalo_no_retraining``  ``dm_model`` applied to the subhalo field unchanged.
 

@@ -113,7 +113,7 @@ A few things make this harder than it might look:
 | `dm_model` | dark matter (λ = 0.33 h⁻¹ Mpc) | dark matter | the basic task, using the dark matter density field |
 | `subhalo_no_retraining` | dark matter | galaxies (λ = 7 h⁻¹ Mpc) | whether a dark matter model works on sparse tracers without retraining (inputs rescaled, weights unchanged) |
 | `subhalo_from_scratch` | galaxies | galaxies | training directly on the sparse field from random weights |
-| `subhalo_curriculum` | dark matter, then galaxies | galaxies | one-step curriculum: start from `dm_model`, freeze its first encoder block, fine-tune on galaxies (the paper uses two steps, see below) |
+| `subhalo_curriculum` | dark matter, then galaxies | galaxies | one-step curriculum learning: start from `dm_model`, freeze its first encoder block, fine-tune on galaxies (the paper uses two steps, see below) |
 
 All four are scored against the same T-web labels, which are computed from the full dark matter. For the
 galaxy inputs, that means the network has to infer structure it can't see directly.
@@ -161,7 +161,7 @@ average), but 5 seeds aren't enough to call that significant. This is in line wi
 gain from the curriculum was also modest: at λ = 10 h⁻¹ Mpc, training directly on galaxies gave void
 F1 = 0.89 and MCC = 0.56, and the best curriculum gave the same void F1 with MCC = 0.60.
 
-One caveat: the demo uses a simplified, one-step curriculum (dark matter at λ = 0.33 straight to galaxies
+One caveat: the demo uses a simplified, one-step curriculum learning scheme (dark matter at λ = 0.33 straight to galaxies
 at λ = 7 h⁻¹ Mpc, with the first encoder block frozen). The best scheme in the paper has two steps
 (λ = 0.33 → 3 → 10 h⁻¹ Mpc, freezing more of the encoder at each step) and runs at 512³, where the tracers
 are much sparser in voxel terms (about 25 voxels apart at λ = 10, compared with about 4 here). That is the
