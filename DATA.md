@@ -5,7 +5,7 @@ to keep in the repo (4.5 MB) and large enough to train and evaluate the demo mod
 [`scripts/prepare_sample.py`](scripts/prepare_sample.py) from three `.fvol` volumes I produced during the
 DeepVoid project in 2024.
 
-TNG300-3-Dark is the dark-matter-only, lowest-resolution run of the TNG300 box (205 h⁻¹ Mpc on a side,
+It's the dark-matter-only, lowest-resolution run of the largest TNG box (205 h⁻¹ Mpc on a side,
 625³ particles). DeepVoid only needs the dark matter particles and the subhalos identified in them, and the
 lower resolution makes training and processing much cheaper than the full-physics or higher-resolution runs.
 

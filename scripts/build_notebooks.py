@@ -67,7 +67,7 @@ DEMO = [
 
 This notebook runs trained DeepVoid models end to end, in a few minutes, and a CPU is fine:
 
-1. load a 128³ cube from the TNG300-3-Dark simulation (205 h⁻¹ Mpc on a side),
+1. load a 128³ cube from the IllustrisTNG TNG300-3-Dark simulation (205 h⁻¹ Mpc on a side),
 2. classify every one of its 2.1 million voxels as void, wall, filament or halo,
 3. compare the prediction with the ground truth on validation subcubes the model never trained on,
 4. repeat with only the galaxies as input, which is closer to what a galaxy survey sees.
@@ -76,8 +76,8 @@ The labels come from the T-web: at each point, count how many directions the loc
 compressing matter (0 = void, 1 = wall, 2 = filament, 3 = halo). The network only sees the density
 field and has to learn this from it.
 
-*Simulation data: [IllustrisTNG](https://www.tng-project.org/) (TNG300-3-Dark), produced and publicly
-released by the IllustrisTNG collaboration. See the README for the papers to cite.*
+*Simulation data: [TNG](https://www.tng-project.org/), produced and publicly released by the
+IllustrisTNG collaboration. See the README for the papers to cite.*
 """),
     code(SETUP),
     code('''

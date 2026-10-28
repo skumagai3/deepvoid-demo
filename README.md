@@ -19,7 +19,7 @@ halo. It was the main project of my PhD in physics at Drexel (2026) and is publi
 *The Astrophysical Journal* ([Kumagai et al. 2026](https://doi.org/10.3847/1538-4357/ae2c80)).
 
 This repo is a scaled-down version that runs in Colab in a few minutes. It includes trained weights, a
-small sample of simulation data from the public [IllustrisTNG](https://www.tng-project.org/) project
+small sample of the public [IllustrisTNG](https://www.tng-project.org/) TNG300-3-Dark simulation
 (see [Simulation data](#simulation-data-illustristng) below), and a notebook that goes from a density
 field to scored predictions.
 
@@ -95,7 +95,7 @@ A few things make this harder than it might look:
   correlation coefficient (MCC) instead.
 - Real surveys see galaxies, not dark matter. Galaxies are a sparse and biased sample of the underlying
   matter, so the more realistic task is to recover the web traced by the dark matter from galaxies
-  alone. TNG300-3-Dark only contains dark matter, so for galaxies I use its subhalos, the small, dense
+  alone. The TNG run I use only contains dark matter, so for galaxies I use its subhalos, the small, dense
   clumps of dark matter where galaxies would form. They're a close enough stand-in that I call them
   galaxies here (the model and file names still say "subhalo"). Thinned to 7 h⁻¹ Mpc apart, 93% of
   voxels contain none. In the paper I used curriculum learning for this: train on dark matter first,
@@ -200,11 +200,11 @@ the one with the highest mean validation MCC across the three trained models (se
 ### The full-scale results
 
 The full version of this work is in [Kumagai et al. 2026](https://doi.org/10.3847/1538-4357/ae2c80). On
-the full 512³ TNG300 box, DeepVoid reaches void F1 = 0.96 on dark matter at λ = 0.33 h⁻¹ Mpc, and void
+the full 512³ TNG box, DeepVoid reaches void F1 = 0.96 on dark matter at λ = 0.33 h⁻¹ Mpc, and void
 F1 = 0.89 on galaxies at λ = 10 h⁻¹ Mpc, which is about 28,000 times fewer tracers than the dark matter.
 
 <p align="center">
-  <img src="assets/paper_512.png" width="860" alt="Figure from the paper: a slice of the full 512³ TNG300 box showing the dark matter density, the prediction from dark matter at λ = 0.33 h⁻¹ Mpc, the T-web classification, the galaxies within ±2 h⁻¹ Mpc of the slice, and the prediction from galaxies at λ = 10 h⁻¹ Mpc">
+  <img src="assets/paper_512.png" width="860" alt="Figure from the paper: a slice of the full 512³ TNG box showing the dark matter density, the prediction from dark matter at λ = 0.33 h⁻¹ Mpc, the T-web classification, the galaxies within ±2 h⁻¹ Mpc of the slice, and the prediction from galaxies at λ = 10 h⁻¹ Mpc">
 </p>
 
 <p align="center"><em>
@@ -248,8 +248,8 @@ jupyter lab notebooks/deepvoid_demo.ipynb
 </p>
 
 ```
-TNG300 dark matter ─► density on a 128³ grid ─────────────┐
-TNG300 galaxies    ─► thinned to λ = 7 h⁻¹ Mpc ─► density ──┤  input (one channel)
+TNG dark matter    ─► density on a 128³ grid ─────────────┐
+TNG galaxies       ─► thinned to λ = 7 h⁻¹ Mpc ─► density ──┤  input (one channel)
 full dark matter   ─► tidal tensor eigenvalues ─► T-web ──┤  labels: void / wall / filament / halo
                                                           ▼
           cut the box into 64 subcubes of 32³ ─► random 80/20 split: 51 training, 13 validation

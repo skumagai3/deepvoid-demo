@@ -11,7 +11,7 @@ from .io import CLASS_NAMES
 CLASS_COLORS = ("#e9eef5", "#86a9d6", "#e7a43a", "#b8322a")
 ERROR_COLORS = ("#d9d9d9", "#c0392b")     # correct, wrong
 
-# Physical scale of the demo box (IllustrisTNG300: 205 h^-1 Mpc, periodic).
+# Physical scale of the demo box (TNG: 205 h^-1 Mpc, periodic).
 BOX = 205.0
 UNIT = "h⁻¹ Mpc"
 PLANES = {0: ("y", "z"), 1: ("x", "z"), 2: ("x", "y")}   # (horizontal, vertical) per slice axis

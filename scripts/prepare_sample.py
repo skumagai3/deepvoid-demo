@@ -1,5 +1,5 @@
 """Build the committed demo sample ``data/tng300_128.npz`` from the original
-``.fvol`` volumes (IllustrisTNG300-3-Dark, snapshot 99, z = 0, on a 128^3 grid).
+``.fvol`` volumes (IllustrisTNG TNG300-3-Dark, snapshot 99, z = 0, on a 128^3 grid).
 
     python scripts/prepare_sample.py --raw path/to/fvols
 
