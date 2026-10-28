@@ -334,6 +334,12 @@ uses TNG300-3-Dark, the dark-matter-only, lowest-resolution run of the largest T
 side, 625³ dark matter particles), at redshift zero. The dark matter density, the galaxy (subhalo) field and
 the T-web labels in `data/tng300_128.npz` are all derived from it (see the [data card](DATA.md)).
 
+A note for astronomers: the "galaxies" in this demo are the simulation's subhalos (bound clumps of dark
+matter identified within halos), not galaxies. A dark-matter-only run has no gas or stars, so subhalos
+aren't a one-to-one match for the galaxies a survey would see, and they don't carry the selection effects
+or galaxy bias of a real sample. For testing whether a network can recover the cosmic web from a sparse
+set of tracers, they're a close enough stand-in.
+
 If you use these data, please follow the [TNG data access terms](https://www.tng-project.org/data/) and cite
 the IllustrisTNG introductory papers and the data release paper:
 
