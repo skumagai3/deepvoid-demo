@@ -323,7 +323,7 @@ archivePrefix = {arXiv},
 }
 ```
 
-The code is under the [MIT license](LICENSE). The simulation data are not; see below.
+The code is under the [MIT license](LICENSE). The simulation is not; see below.
 
 ## Simulation data: IllustrisTNG
 
