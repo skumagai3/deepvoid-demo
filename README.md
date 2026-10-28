@@ -364,7 +364,7 @@ the T-web labels in `data/tng300_128.npz` are all derived from it (see the [data
 
 A note for astronomers: the "galaxies" in this demo are the simulation's subhalos (bound clumps of dark
 matter identified within halos) rather than true galaxies. A dark-matter-only run has no gas or stars, so subhalos
-aren't a one-to-one match for the galaxies a survey would see, and they don't carry the selection effects
+aren't a one-to-one match for the galaxies a survey would see, and they don't carry the full selection effects
 or galaxy bias of a real sample. The sparse samples are built by ranking the subhalos by mass and keeping
 the most massive ones until their mean separation reaches the target λ (7 h⁻¹ Mpc here, as in the paper's
 abundance matching). This roughly mimics the luminosity limit of a real survey, though a real limit
