@@ -104,17 +104,34 @@ Why this is a hard machine learning problem:
 
 ## The model
 
-DeepVoid is a 3D U-Net. The encoder repeatedly convolves and downsamples the density field to pick up
-structure on larger and larger scales, and the decoder upsamples back to full resolution, joining in the
-encoder's features at each level so fine detail isn't lost. The output is a probability for each of the
-four classes at every voxel, and the predicted label is the most likely one.
+Traditional void finders estimate a density field and then apply kernels and thresholds chosen by hand.
+A convolutional neural network (CNN) learns the spatial patterns directly from the data instead. Each layer
+slides small 3×3×3 filters across the volume, so the same feature detectors are applied everywhere, and
+stacking layers lets the network build from simple local features (edges, gradients) up to more complex
+ones. CNNs have been very successful at segmenting volume-filling structures in 3D medical images, which is
+a close cousin of this problem.
+
+DeepVoid uses a U-Net ([Ronneberger et al. 2015](https://arxiv.org/abs/1505.04597)), an architecture first
+designed to segment neurons in electron microscope images. The encoder works like the first half of an
+autoencoder: blocks of convolutions followed by max pooling halve the resolution and double the number of
+feature channels at each level, until the information reaches the bottleneck, a compressed representation
+of the whole subcube. The decoder then upsamples back to full resolution. On its own, an encoder and decoder
+like this loses track of exactly where things are, so the U-Net adds skip connections that concatenate each
+encoder level's feature maps onto the matching decoder level (the gray arrows in panel b). That lets the
+network combine large-scale context with fine local detail, which is what it takes to trace thin walls and
+filaments.
+
+The last layer outputs four numbers per voxel, one per class, and a softmax turns them into confidence
+scores that add up to one. The predicted label is the class with the highest score (the argmax).
 
 <p align="center">
   <img src="assets/architecture.png" width="900" alt="The demo's depth-4 3D U-Net: (a) the density field with a 32³ subcube outlined, (b) encoder levels at 32³, 16³ and 8³ with 16, 32 and 64 filters, a 4³ bottleneck with 128 filters, decoder levels joined to the encoder by concatenation, and four class-probability cubes (softmax, then argmax), and (c) the resulting DeepVoid prediction">
 </p>
 
 The demo model has depth 4 (counting the bottleneck) and 16 base filters, about 1.4 million parameters.
-It trains on 32³ subcubes and predicts the whole 128³ box with overlapping windows.
+It trains on 32³ subcubes and predicts the whole 128³ box with overlapping windows. Convolutions respond
+the same way to a pattern wherever it sits in the volume, but not to a rotated copy of it, so the training
+subcubes are also rotated by 90° to show the network each structure in several orientations.
 
 ## Results
 
