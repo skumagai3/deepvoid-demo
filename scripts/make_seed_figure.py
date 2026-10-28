@@ -13,8 +13,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from dvdemo.viz import plot_seed_study  # noqa: E402
 
 LABELS = {"dm_model": "dm_model: dark matter → dark matter",
-          "subhalo_from_scratch": "subhalo_from_scratch: trained on subhalos only",
-          "subhalo_curriculum": "subhalo_curriculum: dm_model fine-tuned on subhalos"}
+          "subhalo_from_scratch": "subhalo_from_scratch: trained on galaxies only",
+          "subhalo_curriculum": "subhalo_curriculum: dm_model fine-tuned on galaxies"}
 
 
 def main():

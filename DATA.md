@@ -12,7 +12,7 @@ lower resolution makes training and processing much cheaper than the full-physic
 | Key | dtype | Contents |
 |---|---|---|
 | `dm` | float16 | dark matter density on a 128³ grid, as ρ/ρ̄. Mean particle spacing λ = 0.33 h⁻¹ Mpc. |
-| `subhalo_L7` | float16 | subhalo mass density, with subhalos subsampled to a mean separation of λ = 7 h⁻¹ Mpc, as ρ/ρ̄. 92.6% of voxels are empty. |
+| `subhalo_L7` | float16 | subhalo mass density (subhalos are the clumps of dark matter where galaxies would form, so they stand in for galaxies), with subhalos subsampled to a mean separation of λ = 7 h⁻¹ Mpc, as ρ/ρ̄. 92.6% of voxels are empty. |
 | `mask` | uint8 | T-web class for each voxel: 0 void, 1 wall, 2 filament, 3 halo. |
 | `meta` | JSON string | box size, grid, label settings, class fractions, the training/validation split, and SHA-256 hashes of the source files. |
 
@@ -24,8 +24,9 @@ Geometry: a periodic box of 205 h⁻¹ Mpc with 128³ voxels of 1.6 h⁻¹ Mpc. 
 grid and axis order.
 
 Labels: the T-web classification (the number of tidal tensor eigenvalues above 0.65) of the full dark matter
-field, smoothed with σ = 0.6 grid cells. That is the 128³ equivalent of the σ = 2.4 used on the 512³ grid in
-the paper. The class fractions are 61.6% void, 32.9% wall, 5.0% filament and 0.5% halo. Both inputs are
+field, with the potential smoothed by a Gaussian of σ = 0.6 grid cells (about 1 h⁻¹ Mpc). That is the 128³
+equivalent of the σ = 2.4 cells used on the 512³ grid in the paper. The README explains how the tidal
+tensor is computed. The class fractions are 61.6% void, 32.9% wall, 5.0% filament and 0.5% halo. Both inputs are
 trained against these same labels, so with the subhalo input the network has to infer structure in matter
 it can't see.
 

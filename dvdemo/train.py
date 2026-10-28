@@ -158,13 +158,13 @@ def run_all(sample: dict, out_dir: str = "weights", arch: Optional[ArchConfig] =
                               "note": "dm_model weights applied to the L=7 subhalo field"}
     print(f"subhalo_no_retraining: validation MCC {s['mcc']:.4f}, void F1 {s['void_f1']:.4f}", flush=True)
 
-    print("== 2/3 curriculum: dense model fine-tuned on subhalos (lambda = 7) ==", flush=True)
+    print("== 2/3 curriculum: dense model fine-tuned on galaxies (lambda = 7) ==", flush=True)
     m2 = tf.keras.models.clone_model(m)
     m2.set_weights(m.get_weights())
     norm2, info2 = train_stage(m2, sample["subhalo_L7"], y, split, curriculum)
     finish("subhalo_curriculum", m2, norm2, info2, "subhalo_L7", [asdict(dense), asdict(curriculum)])
 
-    print("== 3/3 subhalos from scratch ==", flush=True)
+    print("== 3/3 galaxies from scratch ==", flush=True)
     m3 = build_unet(**asdict(arch))
     norm3, info3 = train_stage(m3, sample["subhalo_L7"], y, split, scratch)
     finish("subhalo_from_scratch", m3, norm3, info3, "subhalo_L7", [asdict(scratch)])

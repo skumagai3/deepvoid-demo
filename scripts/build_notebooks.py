@@ -51,9 +51,9 @@ MODELS_TABLE = """
 | Model | Trained on | Applied to | What it tests |
 |---|---|---|---|
 | `dm_model` | dark matter (λ = 0.33 h⁻¹ Mpc) | dark matter | the basic task, with the full matter field as input |
-| `subhalo_no_retraining` | dark matter | subhalos (λ = 7 h⁻¹ Mpc) | does a dark-matter model work on sparse tracers as-is? (input rescaled, weights unchanged) |
-| `subhalo_from_scratch` | subhalos | subhalos | training directly on the sparse field, starting from random weights |
-| `subhalo_curriculum` | dark matter, then subhalos | subhalos | one-step curriculum learning: start from `dm_model`, freeze its first encoder block, fine-tune on subhalos |
+| `subhalo_no_retraining` | dark matter | galaxies (λ = 7 h⁻¹ Mpc) | does a dark-matter model work on sparse tracers as-is? (input rescaled, weights unchanged) |
+| `subhalo_from_scratch` | galaxies | galaxies | training directly on the sparse field, starting from random weights |
+| `subhalo_curriculum` | dark matter, then galaxies | galaxies | one-step curriculum learning: start from `dm_model`, freeze its first encoder block, fine-tune on galaxies |
 
 All four are scored against the same T-web labels (computed from the full dark matter) on the same
 validation subcubes.
@@ -70,7 +70,7 @@ This notebook runs trained DeepVoid models end to end, in a few minutes on a CPU
 1. load a 128³ cube from the IllustrisTNG300 dark-matter simulation (205 h⁻¹ Mpc on a side),
 2. classify every one of its 2.1 million voxels as void, wall, filament or halo,
 3. compare the prediction with the ground truth on validation subcubes the model never trained on,
-4. repeat with only the subhalos (the sparse objects that host galaxies) as input, which is closer to what a galaxy survey sees.
+4. repeat with only the galaxies as input, which is closer to what a galaxy survey sees.
 
 The labels come from the T-web: at each point, count how many directions the local tidal field is
 compressing matter (0 = void, 1 = wall, 2 = filament, 3 = halo). The network only sees the density
@@ -102,7 +102,9 @@ print("TensorFlow", tf.__version__, "| GPU:", tf.config.list_physical_devices("G
 The sample is 4.5 MB: two input fields and the label cube, all on the same 128³ grid (1.6 h⁻¹ Mpc voxels).
 
 * Dark matter: the full matter density, sampled by particles 0.33 h⁻¹ Mpc apart. Lots of detail, but not something we can observe.
-* Subhalos at λ = 7 h⁻¹ Mpc: only the subhalos, thinned to a mean separation of 7 h⁻¹ Mpc. That's about
+* Galaxies at λ = 7 h⁻¹ Mpc. This simulation only contains dark matter, so the galaxies are its subhalos:
+  the small, dense clumps of dark matter where galaxies would form. They're close enough that I call them
+  galaxies (the code and file names say `subhalo`). They're thinned to a mean separation of 7 h⁻¹ Mpc, about
   10,000 times fewer tracers than the dark matter, and 93% of voxels are empty, which is much closer to what a galaxy survey sees.
 * Labels: T-web classes computed from the full dark matter, used for both inputs. With the sparse input, the
   network has to infer structure it can't see directly.
@@ -197,9 +199,9 @@ def browse(x):
     plt.show()
 '''),
     md(f"""
-## 3. Sparse subhalos (λ = 7 h⁻¹ Mpc)
+## 3. Sparse galaxies (λ = 7 h⁻¹ Mpc)
 
-Real surveys see galaxies, not dark matter. Here the input is only the subhalo field, but the target is
+Real surveys see galaxies, not dark matter. Here the input is only the galaxy field, but the target is
 still the T-web of the full matter distribution. I compare three ways to handle it, alongside the
 dark matter model from section 2:
 
@@ -217,9 +219,9 @@ zs = Normalizer(norm.method).fit(sample["subhalo_L7"][TRAIN])
 preds["subhalo_no_retraining"] = predict_volume(keras_predict_fn(model), zs.transform(sample["subhalo_L7"])).argmax(-1).astype(np.uint8)
 
 labels = {"dm_model": "dm_model: dark matter → dark matter",
-          "subhalo_no_retraining": "subhalo_no_retraining: dm_model applied to subhalos",
-          "subhalo_from_scratch": "subhalo_from_scratch: trained on subhalos only",
-          "subhalo_curriculum": "subhalo_curriculum: dm_model fine-tuned on subhalos"}
+          "subhalo_no_retraining": "subhalo_no_retraining: dm_model applied to galaxies",
+          "subhalo_from_scratch": "subhalo_from_scratch: trained on galaxies only",
+          "subhalo_curriculum": "subhalo_curriculum: dm_model fine-tuned on galaxies"}
 scores["dm_model"] = m_dense
 for k in ("subhalo_no_retraining", "subhalo_from_scratch", "subhalo_curriculum"):
     scores[k] = evaluate(mask, preds[k], list(CLASS_NAMES), where=VAL)
@@ -232,18 +234,18 @@ table.style.format("{:.3f}").background_gradient(cmap="Blues", vmin=0, vmax=1)
 fig, ax = plt.subplots(figsize=(7.4, 3.8))
 viz.plot_model_comparison(scores, labels, ax=ax); plt.tight_layout(); plt.show()
 fig = viz.compare_slice(sample["subhalo_L7"], mask, preds["subhalo_curriculum"], x_mid,
-                        field_title="Subhalos, λ = 7 h⁻¹ Mpc", sparse=True, split=split)
+                        field_title="Galaxies, λ = 7 h⁻¹ Mpc", sparse=True, split=split)
 plt.show()
 '''),
     md("""
 ## Caveats
 
 * This is a scaled-down version of the method. The full-scale results (Kumagai et al., ApJ 2026) are
-  void F1 = 0.96 for dark matter at λ = 0.33 h⁻¹ Mpc and void F1 = 0.89 for subhalos at λ = 10 h⁻¹ Mpc.
+  void F1 = 0.96 for dark matter at λ = 0.33 h⁻¹ Mpc and void F1 = 0.89 for galaxies at λ = 10 h⁻¹ Mpc.
   To fit in a repo and train in minutes, this demo uses a 4× coarser grid (1.6 instead of 0.4 h⁻¹ Mpc
   voxels), 64× less data, a small U-Net and very little tuning, so its numbers aren't directly
   comparable. The README has more detail.
-* The curriculum is simplified. The demo goes from dark matter (λ = 0.33) straight to subhalos at
+* The curriculum is simplified. The demo goes from dark matter (λ = 0.33) straight to galaxies at
   λ = 7 h⁻¹ Mpc in one step. The paper's best scheme is two-step (λ = 0.33 → 3 → 10 h⁻¹ Mpc) on much
   sparser tracers in voxel terms, which is where pretraining should help most. Even there the gain over
   direct training is modest (MCC 0.60 vs. 0.56, same void F1 of 0.89), so a near-tie here isn't surprising.
@@ -330,7 +332,7 @@ training voxels only and reused unchanged at prediction time.
 | Option | Transform | Rationale |
 |---|---|---|
 | `"minmax"` | (x − min) / (max − min) | What the DeepVoid paper uses. Simple, bounded to [0, 1], no free parameters, and identical whether the input is ρ, ρ/ρ̄ or δ. |
-| `"log"` | log10(1 + δ), then min-max | Cosmological density fields are close to log-normal, so the log spreads out the low-density range where voids and walls differ, and puts dense and sparse tracers on a common relative scale. Empty voxels (93% of the subhalo field) are floored at ρ/ρ̄ = 10⁻³ before the log. |
+| `"log"` | log10(1 + δ), then min-max | Cosmological density fields are close to log-normal, so the log spreads out the low-density range where voids and walls differ, and puts dense and sparse tracers on a common relative scale. Empty voxels (93% of the galaxy field) are floored at ρ/ρ̄ = 10⁻³ before the log. |
 | `"log_zscore"` | log10(1 + δ), then (y − mean) / std | Same log; scaling by the mean and spread of the distribution rather than its two most extreme voxels, so a single unusually dense halo does not change the scale. |
 
 ### 2. Overlapping training subcubes
@@ -346,7 +348,7 @@ The histograms show what each normalization does to the training voxels of both 
 train_mask, _ = split_masks(sample["mask"].shape, sample["meta"]["split"])
 fig, axes = plt.subplots(2, 3, figsize=(12, 5.4))
 for r, (field, title) in enumerate((("dm", "Dark matter, λ = 0.33 h⁻¹ Mpc"),
-                                    ("subhalo_L7", "Subhalos, λ = 7 h⁻¹ Mpc"))):
+                                    ("subhalo_L7", "Galaxies, λ = 7 h⁻¹ Mpc"))):
     x = sample[field][train_mask]
     for c, method in enumerate(("minmax", "log", "log_zscore")):
         v = Normalizer(method).fit(x).transform(x)

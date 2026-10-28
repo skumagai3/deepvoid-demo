@@ -254,7 +254,7 @@ def alignment_figure(sample: dict, index: int = 64):
         show_density(row[0], take_slice(sample["dm"], index, axis),
                      f"Dark matter (λ = 0.33 {UNIT})" if axis == 0 else "")
         show_density(row[1], take_slice(sample["subhalo_L7"], index, axis),
-                     f"Subhalos (λ = 7 {UNIT})" if axis == 0 else "", sparse=True)
+                     f"Galaxies (λ = 7 {UNIT})" if axis == 0 else "", sparse=True)
         for a in row[:2]:
             _contour(a, m2, 1, "#9fd3ff", lw=0.6)
         show_labels(row[2], m2, "T-web mask (ground truth)" if axis == 0 else "")

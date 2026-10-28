@@ -5,12 +5,12 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2504.21134-b31b1b)](https://arxiv.org/abs/2504.21134)
 
 <p align="center">
-  <img src="assets/hero.gif" width="760" alt="A sweep through the simulation box: input density, ground-truth labels and U-Net prediction, for dark matter (top) and sparse subhalos (bottom), with the validation subcubes outlined">
+  <img src="assets/hero.gif" width="760" alt="A sweep through the simulation box: input density, ground-truth labels and U-Net prediction, for dark matter (top) and sparse galaxies (bottom), with the validation subcubes outlined">
 </p>
 
 <p align="center"><em>
 Slices through the simulation box. Top row: predictions from the full dark matter density. Bottom row:
-predictions from subhalos alone (about 10,000 times fewer tracers). The dashed squares are validation
+predictions from galaxies alone (about 10,000 times fewer tracers). The dashed squares are validation
 subcubes that were held out of training.
 </em></p>
 
@@ -54,13 +54,34 @@ they agreed on the largest void but disagreed on the smaller ones, on void sizes
 count as void galaxies.
 
 Instead of tuning another finder, I used a definition based on the physics that shapes the cosmic web:
-the tidal tensor (T-web). At each point you compute the tidal field from
-the smoothed matter distribution and count how many directions matter is collapsing along: zero means
-void, one wall, two filament, three halo. The network only ever sees the density field and has to learn
-to reproduce those labels.
+the T-web ([Hahn et al. 2007](https://arxiv.org/abs/astro-ph/0610280)). The idea is that gravity doesn't
+just pull matter toward dense regions, it also stretches and squeezes it differently in different
+directions. A region being squeezed along one direction is collapsing into a wall, along two into a
+filament, and along all three into a halo. A region being stretched in every direction is a void. The
+tidal tensor measures that squeezing.
+
+To compute it, I put the dark matter particles on a grid to get the density contrast δ = ρ/ρ̄ − 1 and
+solve Poisson's equation for the gravitational potential Φ. On a periodic grid this is easiest with a
+Fourier transform, where taking derivatives turns into multiplying by the wavevector **k**:
+
+$$\nabla^2 \Phi = \delta \quad\Longrightarrow\quad \hat{\Phi}(\mathbf{k}) = -\frac{\hat{\delta}(\mathbf{k})}{k^2}$$
+
+(in units where 4πGρ̄ = 1). After smoothing the potential with a Gaussian about 1 h⁻¹ Mpc wide, the tidal
+tensor is its matrix of second derivatives:
+
+$$T_{ij}(\mathbf{x}) = \frac{\partial^2 \Phi(\mathbf{x})}{\partial x_i \, \partial x_j}$$
+
+That's a symmetric 3×3 matrix at every voxel. Its three eigenvalues say how strongly matter is being
+compressed along three perpendicular directions, and they add up to δ. The label is the number of
+eigenvalues above a threshold λ_th: none is void, one is wall, two is filament, three is halo. I use
+λ_th = 0.65. A threshold of 0 would count any compression at all, even compression too weak to make
+anything collapse within the age of the universe, and only 16% of the volume would come out as void.
+With 0.65 the proportions of the four classes are closer to what other methods find.
+
+The network only ever sees the density field and has to learn to reproduce these labels.
 
 <p align="center">
-  <img src="assets/alignment.png" width="820" alt="Slices through x, y and z of the dark matter density, the subhalo density and the T-web mask, with the mask's void edges drawn on both inputs">
+  <img src="assets/alignment.png" width="820" alt="Slices through x, y and z of the dark matter density, the galaxy density and the T-web mask, with the mask's void edges drawn on both inputs">
 </p>
 
 A few things make this harder than it might look:
@@ -72,10 +93,13 @@ A few things make this harder than it might look:
   everywhere would already give 62% accuracy, so I report void F1 and the multiclass Matthews
   correlation coefficient (MCC) instead.
 - Real surveys see galaxies, not dark matter. Galaxies are a sparse and biased sample of the underlying
-  matter, so the more realistic task is to recover the web of the full matter field from subhalos spaced
-  7 to 10 h⁻¹ Mpc apart, where 93% of voxels are empty. In the paper I used curriculum learning for this:
-  train on dark matter first, then adapt to sparser tracers. The demo compares a simplified, one-step
-  version of that with training on subhalos from scratch.
+  matter, so the more realistic task is to recover the web of the full matter field from galaxies
+  alone. TNG300-3-Dark only contains dark matter, so for galaxies I use its subhalos, the small, dense
+  clumps of dark matter where galaxies would form. They're a close enough stand-in that I call them
+  galaxies here (the model and file names still say "subhalo"). Thinned to 7 h⁻¹ Mpc apart, 93% of
+  voxels contain none. In the paper I used curriculum learning for this: train on dark matter first,
+  then adapt to sparser tracers. The demo compares a simplified, one-step version of that with training
+  on galaxies from scratch.
 - The validation set has to stay separate from training. The box is cut into 32³ subcubes and split into
   training and validation before any augmentation, so rotated copies only ever come from training
   subcubes. All the numbers below are computed on the validation subcubes.
@@ -87,12 +111,12 @@ A few things make this harder than it might look:
 | Model | Trained on | Applied to | What it tests |
 |---|---|---|---|
 | `dm_model` | dark matter (λ = 0.33 h⁻¹ Mpc) | dark matter | the basic task, using the full matter field |
-| `subhalo_no_retraining` | dark matter | subhalos (λ = 7 h⁻¹ Mpc) | whether a dark matter model works on sparse tracers without retraining (inputs rescaled, weights unchanged) |
-| `subhalo_from_scratch` | subhalos | subhalos | training directly on the sparse field from random weights |
-| `subhalo_curriculum` | dark matter, then subhalos | subhalos | one-step curriculum: start from `dm_model`, freeze its first encoder block, fine-tune on subhalos (the paper uses two steps, see below) |
+| `subhalo_no_retraining` | dark matter | galaxies (λ = 7 h⁻¹ Mpc) | whether a dark matter model works on sparse tracers without retraining (inputs rescaled, weights unchanged) |
+| `subhalo_from_scratch` | galaxies | galaxies | training directly on the sparse field from random weights |
+| `subhalo_curriculum` | dark matter, then galaxies | galaxies | one-step curriculum: start from `dm_model`, freeze its first encoder block, fine-tune on galaxies (the paper uses two steps, see below) |
 
 All four are scored against the same T-web labels, which are computed from the full dark matter. For the
-subhalo inputs, that means the network has to infer structure it can't see directly.
+galaxy inputs, that means the network has to infer structure it can't see directly.
 
 ### Scores
 
@@ -124,8 +148,8 @@ classes, but 90% of `dm_model`'s errors are on those boundaries, and only 0.2% o
 more than one class (void predicted as filament, for example). The confusion matrices further down show
 the same pattern.
 
-Going from dark matter to subhalos costs less than I expected. With about 10,000 times fewer tracers,
-void F1 only drops from 0.88 to 0.86 or 0.87. A dark matter model doesn't carry over to subhalos without
+Going from dark matter to galaxies costs less than I expected. With about 10,000 times fewer tracers,
+void F1 only drops from 0.88 to 0.86 or 0.87. A dark matter model doesn't carry over to galaxies without
 retraining, though (`subhalo_no_retraining`, MCC 0.31), because the sparse field looks very different to
 the network.
 
@@ -134,10 +158,10 @@ configuration with 5 different random seeds (figure below): validation MCC is 0.
 curriculum model and 0.572 ± 0.008 from scratch, and the curriculum model is ahead in 3 of the 5 seeds.
 It does vary about four times less from run to run, and it gets higher halo F1 in all 5 seeds (by 0.03 on
 average), but 5 seeds aren't enough to call that significant. This is in line with the paper, where the
-gain from the curriculum was also modest: at λ = 10 h⁻¹ Mpc, training directly on subhalos gave void
+gain from the curriculum was also modest: at λ = 10 h⁻¹ Mpc, training directly on galaxies gave void
 F1 = 0.89 and MCC = 0.56, and the best curriculum gave the same void F1 with MCC = 0.60.
 
-One caveat: the demo uses a simplified, one-step curriculum (dark matter at λ = 0.33 straight to subhalos
+One caveat: the demo uses a simplified, one-step curriculum (dark matter at λ = 0.33 straight to galaxies
 at λ = 7 h⁻¹ Mpc, with the first encoder block frozen). The best scheme in the paper has two steps
 (λ = 0.33 → 3 → 10 h⁻¹ Mpc, freezing more of the encoder at each step) and runs at 512³, where the tracers
 are much sparser in voxel terms (about 25 voxels apart at λ = 10, compared with about 4 here). That is the
@@ -176,16 +200,16 @@ on a Colab GPU.
 
 The full version of this work is in [Kumagai et al. 2026](https://doi.org/10.3847/1538-4357/ae2c80). On
 the full 512³ TNG300 box, DeepVoid reaches void F1 = 0.96 on dark matter at λ = 0.33 h⁻¹ Mpc, and void
-F1 = 0.89 on subhalos at λ = 10 h⁻¹ Mpc, which is about 27,000 times fewer tracers than the dark matter.
+F1 = 0.89 on galaxies at λ = 10 h⁻¹ Mpc, which is about 27,000 times fewer tracers than the dark matter.
 
 <p align="center">
-  <img src="assets/paper_512.png" width="860" alt="Figure from the paper: a slice of the full 512³ TNG300 box showing the dark matter density, the prediction from dark matter at λ = 0.33 h⁻¹ Mpc, the T-web classification, the subhalos within ±2 h⁻¹ Mpc of the slice, and the prediction from subhalos at λ = 10 h⁻¹ Mpc">
+  <img src="assets/paper_512.png" width="860" alt="Figure from the paper: a slice of the full 512³ TNG300 box showing the dark matter density, the prediction from dark matter at λ = 0.33 h⁻¹ Mpc, the T-web classification, the galaxies within ±2 h⁻¹ Mpc of the slice, and the prediction from galaxies at λ = 10 h⁻¹ Mpc">
 </p>
 
 <p align="center"><em>
 From Kumagai et al. (2026). Top: dark matter density, the prediction from dark matter (λ = 0.33 h⁻¹ Mpc),
-and the T-web ground truth. Bottom: subhalos within ±2 h⁻¹ Mpc of the slice, and the prediction from
-subhalos alone at λ = 10 h⁻¹ Mpc.
+and the T-web ground truth. Bottom: galaxies within ±2 h⁻¹ Mpc of the slice, and the prediction from
+galaxies alone at λ = 10 h⁻¹ Mpc.
 </em></p>
 
 This demo is scaled down so the data fit in a GitHub repo and every model trains in a few minutes on
@@ -204,7 +228,7 @@ Colab, so its numbers aren't directly comparable with the paper's. The main diff
 
 | Notebook | What it does | Runtime |
 |---|---|---|
-| [`deepvoid_demo.ipynb`](notebooks/deepvoid_demo.ipynb) [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/skumagai3/deepvoid-demo/blob/main/notebooks/deepvoid_demo.ipynb) | loads the data and weights, predicts the full box, and shows slices, metrics, model uncertainty, a slice browser and the subhalo comparison | a few minutes on CPU |
+| [`deepvoid_demo.ipynb`](notebooks/deepvoid_demo.ipynb) [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/skumagai3/deepvoid-demo/blob/main/notebooks/deepvoid_demo.ipynb) | loads the data and weights, predicts the full box, and shows slices, metrics, model uncertainty, a slice browser and the galaxy comparison | a few minutes on CPU |
 | [`train_demo_models.ipynb`](notebooks/train_demo_models.ipynb) [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/skumagai3/deepvoid-demo/blob/main/notebooks/train_demo_models.ipynb) | retrains the three models in all six configurations, picks one, and regenerates the figures | about 20 minutes on a Colab GPU |
 | [`seed_study.ipynb`](notebooks/seed_study.ipynb) [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/skumagai3/deepvoid-demo/blob/main/notebooks/seed_study.ipynb) | optional: retrains the published configuration with 5 seeds to measure run-to-run noise | about 20 minutes on a Colab GPU |
 
@@ -224,7 +248,7 @@ jupyter lab notebooks/deepvoid_demo.ipynb
 
 ```
 TNG300 dark matter ─► density on a 128³ grid ─────────────┐
-TNG300 subhalos    ─► thinned to λ = 7 h⁻¹ Mpc ─► density ──┤  input (one channel)
+TNG300 galaxies    ─► thinned to λ = 7 h⁻¹ Mpc ─► density ──┤  input (one channel)
 full dark matter   ─► tidal tensor eigenvalues ─► T-web ──┤  labels: void / wall / filament / halo
                                                           ▼
           cut the box into 64 subcubes of 32³ ─► random 80/20 split: 51 training, 13 validation
@@ -233,7 +257,7 @@ full dark matter   ─► tidal tensor eigenvalues ─► T-web ──┤  label
                                                           ▼
           training subcubes × 4 (as-is + 90° about each axis) ─► 3D U-Net (1.4 M params) ─► softmax
                                                           ▼
-          stage 1: dark matter (λ = 0.33) ─► stage 2: subhalos (λ = 7), first encoder block frozen
+          stage 1: dark matter (λ = 0.33) ─► stage 2: galaxies (λ = 7), first encoder block frozen
                                                           ▼
           inference: 512 overlapping periodic 32³ windows, keep the central 16³ of each
                                                           ▼
@@ -266,7 +290,7 @@ survey-like geometries. That work is in the research code linked below.
 
 | Path | Contents | Size |
 |---|---|---|
-| `data/tng300_128.npz` | dark matter density, λ = 7 subhalo density, T-web labels, metadata ([data card](DATA.md)) | 4.5 MB |
+| `data/tng300_128.npz` | dark matter density, λ = 7 galaxy (subhalo) density, T-web labels, metadata ([data card](DATA.md)) | 4.5 MB |
 | `weights/*.keras`, `weights/*.json` | the three trained models, each with its normalization, settings, training history and validation metrics | ~17 MB |
 | `results/` | validation metrics and predictions used for the figures, scores for all six training configurations, and the seed study | ~1 MB |
 | `notebooks/` | demo, training and seed study notebooks (generated by `scripts/build_notebooks.py`) | |
@@ -300,8 +324,8 @@ All of the data in this demo come from IllustrisTNG, a suite of large cosmologic
 simulations run by the IllustrisTNG collaboration and made public at
 [tng-project.org](https://www.tng-project.org/). DeepVoid relies entirely on that public release. The demo
 uses TNG300-3-Dark, the dark-matter-only, lowest-resolution run of the largest TNG box (205 h⁻¹ Mpc on a
-side, 625³ dark matter particles), at redshift zero. The dark matter density, the subhalo field and the
-T-web labels in `data/tng300_128.npz` are all derived from it (see the [data card](DATA.md)).
+side, 625³ dark matter particles), at redshift zero. The dark matter density, the galaxy (subhalo) field and
+the T-web labels in `data/tng300_128.npz` are all derived from it (see the [data card](DATA.md)).
 
 If you use these data, please follow the [TNG data access terms](https://www.tng-project.org/data/) and cite
 the IllustrisTNG introductory papers and the data release paper:

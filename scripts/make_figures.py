@@ -24,9 +24,9 @@ from dvdemo.viz import (compare_slice, plot_confusion, plot_model_comparison,  #
 
 OUT = "assets"
 LABELS = {"dm_model": "dm_model: dark matter → dark matter",
-          "subhalo_no_retraining": "subhalo_no_retraining: dm_model applied to subhalos",
-          "subhalo_from_scratch": "subhalo_from_scratch: trained on subhalos only",
-          "subhalo_curriculum": "subhalo_curriculum: dm_model fine-tuned on subhalos"}
+          "subhalo_no_retraining": "subhalo_no_retraining: dm_model applied to galaxies",
+          "subhalo_from_scratch": "subhalo_from_scratch: trained on galaxies only",
+          "subhalo_curriculum": "subhalo_curriculum: dm_model fine-tuned on galaxies"}
 
 
 def main():
@@ -47,7 +47,7 @@ def main():
     # Hero GIF: sweep through the whole box, dense and sparse rows.
     frames = render_sweep(
         [("Dark matter, λ = 0.33 h⁻¹ Mpc", s["dm"], False),
-         ("Subhalos, λ = 7 h⁻¹ Mpc", s["subhalo_L7"], True)],
+         ("Galaxies, λ = 7 h⁻¹ Mpc", s["subhalo_L7"], True)],
         s["mask"], [preds["dm_model"], preds["subhalo_curriculum"]],
         range(0, 128, 4), header=header, split=split)
     save_gif(frames, f"{OUT}/hero.gif", fps=2)   # 0.5 s per slice
@@ -56,7 +56,7 @@ def main():
                         field_title="Dark matter (λ = 0.33 h⁻¹ Mpc)", split=split)
     fig.savefig(f"{OUT}/dense_slice.png", dpi=130, bbox_inches="tight"); plt.close(fig)
     fig = compare_slice(s["subhalo_L7"], s["mask"], preds["subhalo_curriculum"], mid,
-                        field_title="Subhalos (λ = 7 h⁻¹ Mpc)", sparse=True, split=split)
+                        field_title="Galaxies (λ = 7 h⁻¹ Mpc)", sparse=True, split=split)
     fig.savefig(f"{OUT}/sparse_slice.png", dpi=130, bbox_inches="tight"); plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(7.2, 3.6))
@@ -78,7 +78,7 @@ def main():
         v = runs[name]["train"]["history"]["val_loss"]
         ax.plot(np.arange(1, len(v) + 1) + start, v, color=color, label=LABELS[name])
     ax.axvline(n_dense, color="#bbb", lw=1, ls="--")
-    ax.text(n_dense, ax.get_ylim()[0], "  switch to subhalos", fontsize=8, color="#777", va="bottom")
+    ax.text(n_dense, ax.get_ylim()[0], "  switch to galaxies", fontsize=8, color="#777", va="bottom")
     ax.set_xlabel("epoch"); ax.set_ylabel("validation loss")
     ax.spines[["top", "right"]].set_visible(False); ax.legend(frameon=False, fontsize=8, loc="upper right")
     fig.tight_layout(); fig.savefig(f"{OUT}/training_curves.png", dpi=150); plt.close(fig)
