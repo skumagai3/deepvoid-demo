@@ -31,8 +31,8 @@ dense halos, which is where galaxies form.
 
 Voids are worth studying for a few reasons:
 
-- Dark energy. Dense regions collapsed under their own gravity long before dark energy started to matter,
-  so voids are the part of the cosmic web that dark energy has shaped most. To a first approximation, the
+- Dark energy. Dense regions collapsed under their own gravity long before dark energy came to dominate
+  the universe's expansion, so voids are the part of the cosmic web that dark energy has shaped most. To a first approximation, the
   accelerating expansion of the universe is the voids expanding and pushing the dense structures apart.
   Voids are also round on average, so if their shapes look stretched or squashed along our line of sight,
   the assumptions we used to turn redshifts into distances are off (the Alcock–Paczyński test).
@@ -44,8 +44,8 @@ Voids are worth studying for a few reasons:
   very few neighbors. That makes voids a clean place to see how galaxies form and evolve on their own,
   without constant mergers and interactions.
 
-All of these need a catalog of voids, and there is no agreed-upon definition of where a void begins and
-ends. The common void finders rely on choices that have to be tuned. [ZOBOV](https://arxiv.org/abs/0712.3049)
+The catch is that there is no agreed-upon definition of where a void begins and ends, and the common void
+finders rely on choices that have to be tuned. [ZOBOV](https://arxiv.org/abs/0712.3049)
 and [VIDE](https://arxiv.org/abs/1406.1191) build a cell around every galaxy and merge low-density cells
 into voids, and the result depends on how those merges are cut off. [VoidFinder](https://arxiv.org/abs/astro-ph/0109357)
 removes isolated galaxies, fills the space between the rest with empty spheres, and keeps only voids that
