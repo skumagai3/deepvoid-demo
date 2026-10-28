@@ -85,7 +85,7 @@ The network only ever sees the density field and has to learn to reproduce these
   <img src="assets/alignment.png" width="820" alt="Slices through x, y and z of the dark matter density, the galaxy density and the T-web mask, with the mask's void edges drawn on both inputs">
 </p>
 
-A few things make this harder than it might look:
+Why this is a hard machine learning problem:
 
 - The data is 3D and large. The demo puts the whole box on a 128³ grid (2.1 million voxels), and the
   paper used 512³ (134 million). Training is done on 32³ subcubes, and predictions for the full box are
@@ -101,6 +101,20 @@ A few things make this harder than it might look:
   voxels contain none. In the paper I used curriculum learning for this: train on dark matter first,
   then adapt to sparser tracers. The demo compares a simplified, one-step version of that with training
   on galaxies from scratch.
+
+## The model
+
+DeepVoid is a 3D U-Net. The encoder repeatedly convolves and downsamples the density field to pick up
+structure on larger and larger scales, and the decoder upsamples back to full resolution, joining in the
+encoder's features at each level so fine detail isn't lost. The output is a probability for each of the
+four classes at every voxel, and the predicted label is the most likely one.
+
+<p align="center">
+  <img src="assets/architecture.png" width="900" alt="The demo's depth-4 3D U-Net: (a) the density field with a 32³ subcube outlined, (b) encoder levels at 32³, 16³ and 8³ with 16, 32 and 64 filters, a 4³ bottleneck with 128 filters, decoder levels joined to the encoder by concatenation, and four class-probability cubes (softmax, then argmax), and (c) the resulting DeepVoid prediction">
+</p>
+
+The demo model has depth 4 (counting the bottleneck) and 16 base filters, about 1.4 million parameters.
+It trains on 32³ subcubes and predicts the whole 128³ box with overlapping windows.
 
 ## Results
 
@@ -242,10 +256,6 @@ jupyter lab notebooks/deepvoid_demo.ipynb
 ```
 
 ## How it works
-
-<p align="center">
-  <img src="assets/architecture.png" width="900" alt="The demo's depth-4 3D U-Net: (a) the density field with a 32³ subcube outlined, (b) encoder levels at 32³, 16³ and 8³ with 16, 32 and 64 filters, a 4³ bottleneck with 128 filters, decoder levels joined to the encoder by concatenation, and four class-probability cubes (softmax, then argmax), and (c) the resulting DeepVoid prediction">
-</p>
 
 ```
 TNG dark matter    ─► density on a 128³ grid ─────────────┐
