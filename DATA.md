@@ -47,9 +47,9 @@ Since these volumes were made a while ago, I checked them before using them:
 
 ## Credit and citation
 
-These data are derived from the public IllustrisTNG release produced by the IllustrisTNG collaboration
-([tng-project.org](https://www.tng-project.org/)). Please use them under the
-[TNG data access terms](https://www.tng-project.org/data/) and cite the IllustrisTNG introductory papers and
+This data is derived from the public TNG release produced by the IllustrisTNG collaboration
+([tng-project.org](https://www.tng-project.org/)). Please use it under the
+[TNG data access terms](https://www.tng-project.org/data/) and cite the TNG introductory papers and
 the data release paper:
 
 - Springel, V., et al. 2018, MNRAS, 475, 676 ([doi:10.1093/mnras/stx3304](https://doi.org/10.1093/mnras/stx3304))

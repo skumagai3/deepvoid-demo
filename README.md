@@ -5,7 +5,7 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2504.21134-b31b1b)](https://arxiv.org/abs/2504.21134)
 
 <p align="center">
-  <img src="assets/hero.gif" width="760" alt="A sweep through the simulation box: input density, ground-truth labels and U-Net prediction, for dark matter (top) and sparse galaxies (bottom), with the validation subcubes outlined">
+  <img src="assets/slice_sweep.gif" width="760" alt="A sweep through the simulation box: input density, ground-truth labels and U-Net prediction, for dark matter (top) and sparse galaxies (bottom), with the validation subcubes outlined">
 </p>
 
 <p align="center"><em>
@@ -87,7 +87,7 @@ The network only ever sees the density field and has to learn to reproduce these
 
 A few things make this harder than it might look:
 
-- The data are 3D and large. The demo box is 128³ (2.1 million voxels) and the paper used 512³
+- The data is 3D and large. The demo box is 128³ (2.1 million voxels) and the paper used 512³
   (134 million). Training is done on 32³ subcubes, and predictions for the full box are stitched together
   from overlapping windows so there are no seams.
 - The classes are very unbalanced: voids are 62% of the volume and halos 0.5%. Predicting "void"
@@ -213,7 +213,7 @@ and the T-web ground truth. Bottom: galaxies within ±2 h⁻¹ Mpc of the slice,
 galaxies alone at λ = 10 h⁻¹ Mpc.
 </em></p>
 
-This demo is scaled down so the data fit in a GitHub repo and every model trains in a few minutes on
+This demo is scaled down so the data fits in a GitHub repo and every model trains in a few minutes on
 Colab, so its numbers aren't directly comparable with the paper's. The main differences:
 
 - Resolution: 128³ voxels of 1.6 h⁻¹ Mpc instead of 512³ voxels of 0.4 h⁻¹ Mpc. Walls and filaments are
@@ -327,7 +327,7 @@ The code is under the [MIT license](LICENSE). The simulation is not; see below.
 
 ## Simulation data: IllustrisTNG
 
-All of the data in this demo come from IllustrisTNG, a suite of large cosmological magnetohydrodynamical
+All of the data in this demo comes from IllustrisTNG, a suite of large cosmological magnetohydrodynamical
 simulations run by the IllustrisTNG collaboration and made public at
 [tng-project.org](https://www.tng-project.org/). DeepVoid relies entirely on that public release. The demo
 uses TNG300-3-Dark, the dark-matter-only, lowest-resolution run of the largest TNG box (205 h⁻¹ Mpc on a
@@ -340,8 +340,8 @@ aren't a one-to-one match for the galaxies a survey would see, and they don't ca
 or galaxy bias of a real sample. For testing whether a network can recover the cosmic web from a sparse
 set of tracers, they're a close enough stand-in.
 
-If you use these data, please follow the [TNG data access terms](https://www.tng-project.org/data/) and cite
-the IllustrisTNG introductory papers and the data release paper:
+If you use this data, please follow the [TNG data access terms](https://www.tng-project.org/data/) and cite
+the TNG introductory papers and the data release paper:
 
 - Springel, V., et al. 2018, MNRAS, 475, 676 ([doi:10.1093/mnras/stx3304](https://doi.org/10.1093/mnras/stx3304))
 - Pillepich, A., et al. 2018, MNRAS, 475, 648 ([doi:10.1093/mnras/stx3112](https://doi.org/10.1093/mnras/stx3112))

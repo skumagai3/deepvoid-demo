@@ -1,4 +1,4 @@
-"""Make the README figures and the hero GIF from saved predictions.
+"""Make the README figures and the slice-sweep GIF from saved predictions.
 
     python scripts/make_figures.py            # after training (needs results/ and weights/*.json)
 
@@ -50,7 +50,7 @@ def main():
          ("Galaxies, λ = 7 h⁻¹ Mpc", s["subhalo_L7"], True)],
         s["mask"], [preds["dm_model"], preds["subhalo_curriculum"]],
         range(0, 128, 4), header=header, split=split)
-    save_gif(frames, f"{OUT}/hero.gif", fps=2)   # 0.5 s per slice
+    save_gif(frames, f"{OUT}/slice_sweep.gif", fps=2)   # 0.5 s per slice
 
     fig = compare_slice(s["dm"], s["mask"], preds["dm_model"], mid,
                         field_title="Dark matter (λ = 0.33 h⁻¹ Mpc)", split=split)

@@ -67,7 +67,7 @@ DEMO = [
 
 This notebook runs trained DeepVoid models end to end, in a few minutes, and a CPU is fine:
 
-1. load a 128³ cube from the IllustrisTNG TNG300-3-Dark simulation (205 h⁻¹ Mpc on a side),
+1. load a 128³ cube from the TNG300-3-Dark simulation (205 h⁻¹ Mpc on a side),
 2. classify every one of its 2.1 million voxels as void, wall, filament or halo,
 3. compare the prediction with the ground truth on validation subcubes the model never trained on,
 4. repeat with only the galaxies as input, which is closer to what a galaxy survey sees.
@@ -425,10 +425,10 @@ summary[summary.config == CHOSEN].set_index("model").round(3)
     code('''
 !python scripts/make_figures.py
 from IPython.display import Image, display
-display(Image("assets/hero.gif"))
+display(Image("assets/slice_sweep.gif"))
 '''),
     code('''
-!zip -q -r deepvoid_demo_outputs.zip weights results assets/hero.gif assets/*.png runs/*/results/metrics.json runs/summary.csv
+!zip -q -r deepvoid_demo_outputs.zip weights results assets/slice_sweep.gif assets/*.png runs/*/results/metrics.json runs/summary.csv
 try:
     from google.colab import files
     files.download("deepvoid_demo_outputs.zip")
