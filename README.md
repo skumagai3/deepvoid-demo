@@ -33,7 +33,8 @@ Voids are worth studying for a few reasons:
 
 - Dark energy. Dense regions collapsed under their own gravity long before dark energy came to dominate
   the universe's expansion, so voids are the part of the cosmic web that dark energy has shaped most.
-  To a first approximation, the accelerating expansion of the universe is the voids expanding and pushing the dense structures apart.
+  To a first approximation, the accelerating expansion of the universe is the voids expanding and
+  pushing the dense structures apart.
   Voids are also round on average, so if their shapes look stretched or squashed along our line of sight,
   the assumptions we used to turn redshifts into distances are off (the Alcock–Paczyński test).
 - Gravity. Many alternatives to general relativity are built so that their effects stay hidden in dense
@@ -58,12 +59,11 @@ the T-web ([Hahn et al. 2007](https://arxiv.org/abs/astro-ph/0610280)). The idea
 just pull matter toward dense regions, it also stretches and squeezes it differently in different
 directions. A region being squeezed along one direction is collapsing into a wall, along two into a
 filament, and along all three into a halo. A region being stretched (or only barely squeezed) in every
-direction is a void. The
-tidal tensor measures that squeezing.
+direction is a void. The tidal tensor measures that squeezing.
 
-To compute it, I assign the dark matter particles to a grid with cloud-in-cell (CIC) interpolation to get the density contrast δ = ρ/ρ̄ − 1 and
-solve Poisson's equation for the gravitational potential Φ. On a periodic grid this is easiest with a
-Fourier transform, where taking derivatives turns into multiplying by the wavevector **k**:
+To compute it, I assign the dark matter particles to a grid with cloud-in-cell (CIC) interpolation to
+get the density contrast δ = ρ/ρ̄ − 1, then solve Poisson's equation for the gravitational potential Φ.
+On a periodic grid this is easiest with a Fourier transform, where taking derivatives turns into multiplying by the wavevector **k**:
 
 $$\nabla^2 \Phi = \delta \quad\Longrightarrow\quad \hat{\Phi}(\mathbf{k}) = -\frac{\hat{\delta}(\mathbf{k})}{k^2}$$
 
@@ -88,8 +88,8 @@ The network only ever sees the density field and has to learn to reproduce these
 A few things make this harder than it might look:
 
 - The data is 3D and large. The demo puts the whole box on a 128³ grid (2.1 million voxels), and the
-  paper used 512³ (134 million). Training is done on 32³ subcubes, and predictions for the full box are stitched together
-  from overlapping windows so there are no seams.
+  paper used 512³ (134 million). Training is done on 32³ subcubes, and predictions for the full box are
+  stitched together from overlapping windows so there are no seams.
 - The classes are very unbalanced: voids are 62% of the volume and halos 0.5%. Predicting "void"
   everywhere would already give 62% accuracy, so I report void F1 and the multiclass Matthews
   correlation coefficient (MCC) instead.
@@ -199,8 +199,8 @@ the one with the highest mean validation MCC across the three trained models (se
 
 ### The full-scale results
 
-The full version of this work is in [Kumagai et al. 2026](https://doi.org/10.3847/1538-4357/ae2c80). On
-the TNG box on a 512³ grid, DeepVoid reaches void F1 = 0.96 on dark matter at λ = 0.33 h⁻¹ Mpc, and void
+The full version of this work is in [Kumagai et al. 2026](https://doi.org/10.3847/1538-4357/ae2c80). At
+512³ resolution, DeepVoid reaches void F1 = 0.96 on dark matter at λ = 0.33 h⁻¹ Mpc, and void
 F1 = 0.89 on galaxies at λ = 10 h⁻¹ Mpc, which is about 28,000 times fewer tracers than the dark matter.
 
 <p align="center">
