@@ -27,10 +27,34 @@ field to scored predictions.
 
 On large scales, matter in the universe is arranged in a cosmic web. Most of the volume is taken up by
 voids, which are surrounded by thin sheets (walls). The walls meet in filaments, and filaments meet at
-dense halos, which is where galaxies form. Voids are useful for testing models of dark energy and gravity,
-but there is no single obvious way to say where a void begins and ends.
+dense halos, which is where galaxies form.
 
-I used the tidal tensor (T-web) definition for the labels. At each point you compute the tidal field from
+Voids are worth studying for a few reasons:
+
+- Dark energy. Dense regions collapsed under their own gravity long before dark energy started to matter,
+  so voids are the part of the cosmic web that dark energy has shaped most. To a first approximation, the
+  accelerating expansion of the universe is the voids expanding and pushing the dense structures apart.
+  Voids are also round on average, so if their shapes look stretched or squashed along our line of sight,
+  the assumptions we used to turn redshifts into distances are off (the Alcock–Paczyński test).
+- Gravity. Many alternatives to general relativity are built so that their effects stay hidden in dense
+  places like our solar system, where gravity has been tested very precisely. That hiding doesn't work in
+  near-empty regions, so voids are one of the few places those theories would show up, for example as
+  voids that grow and empty out faster than standard gravity predicts.
+- Isolated galaxies. Matter drains out of voids over time, and the few galaxies inside them live with
+  very few neighbors. That makes voids a clean place to see how galaxies form and evolve on their own,
+  without constant mergers and interactions.
+
+All of these need a catalog of voids, and there is no agreed-upon definition of where a void begins and
+ends. The common void finders rely on choices that have to be tuned. [ZOBOV](https://arxiv.org/abs/0712.3049)
+and [VIDE](https://arxiv.org/abs/1406.1191) build a cell around every galaxy and merge low-density cells
+into voids, and the result depends on how those merges are cut off. [VoidFinder](https://arxiv.org/abs/astro-ph/0109357)
+removes isolated galaxies, fills the space between the rest with empty spheres, and keeps only voids that
+hold a sphere at least 10 h⁻¹ Mpc in radius. When [13 void finders were run on the same simulation](https://arxiv.org/abs/0803.0918),
+they agreed on the largest void but disagreed on the smaller ones, on void sizes, and on which galaxies
+count as void galaxies.
+
+Instead of tuning another finder, I used a definition based on the physics that shapes the cosmic web:
+the tidal tensor (T-web). At each point you compute the tidal field from
 the smoothed matter distribution and count how many directions matter is collapsing along: zero means
 void, one wall, two filament, three halo. The network only ever sees the density field and has to learn
 to reproduce those labels.
