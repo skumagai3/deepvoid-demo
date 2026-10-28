@@ -51,12 +51,12 @@ MODELS_TABLE = """
 | Model | Trained on | Applied to | What it tests |
 |---|---|---|---|
 | `dm_model` | dark matter (λ = 0.33 h⁻¹ Mpc) | dark matter | the basic task, with the dark matter density field as input |
-| `subhalo_no_retraining` | dark matter | galaxies (λ = 7 h⁻¹ Mpc) | does a dark-matter model work on sparse tracers as-is? (input rescaled, weights unchanged) |
+| `subhalo_no_retraining` | dark matter | galaxies (λ = 7 h⁻¹ Mpc) | does a dark matter model work on sparse tracers as-is? (input rescaled, weights unchanged) |
 | `subhalo_from_scratch` | galaxies | galaxies | training directly on the sparse field, starting from random weights |
 | `subhalo_curriculum` | dark matter, then galaxies | galaxies | one-step curriculum learning: start from `dm_model`, freeze its first encoder block, fine-tune on galaxies |
 
 All four are scored against the same T-web labels (computed from the full dark matter) on the same
-validation subcubes.
+validation subcubes, and the three trained models share the same split, training settings and early stopping.
 """
 
 DEMO = [
@@ -65,9 +65,9 @@ DEMO = [
 
 {badge("notebooks/deepvoid_demo.ipynb")}
 
-This notebook runs trained DeepVoid models end to end, in a few minutes on a CPU (under a minute on a GPU):
+This notebook runs trained DeepVoid models end to end, in a few minutes, and a CPU is fine:
 
-1. load a 128³ cube from the IllustrisTNG300 dark-matter simulation (205 h⁻¹ Mpc on a side),
+1. load a 128³ cube from the IllustrisTNG TNG300-3-Dark simulation (205 h⁻¹ Mpc on a side),
 2. classify every one of its 2.1 million voxels as void, wall, filament or halo,
 3. compare the prediction with the ground truth on validation subcubes the model never trained on,
 4. repeat with only the galaxies as input, which is closer to what a galaxy survey sees.
@@ -142,7 +142,7 @@ fig, ax = plt.subplots(figsize=(5.4, 5.6))
 viz.show_split(ax, mask, split, index=x_mid); plt.show()
 '''),
     md("""
-## 2. Predict the full box with the dark-matter model
+## 2. Predict the full box with the dark matter model
 
 The model is a 3D U-Net (3 resolution levels, 16 → 128 filters, about 1.4 M parameters) trained on the
 augmented 32³ training subcubes. The input scaling (min-max by default; the training notebook explains the
@@ -164,7 +164,7 @@ print(f"full 128^3 box predicted in {time.time() - t:.1f} s")
     code('''
 m_dense = evaluate(mask, pred_dense, list(CLASS_NAMES), where=VAL)
 print(format_report(m_dense, CLASS_NAMES))
-viz.plot_confusion(m_dense["confusion_matrix"], title="Validation subcubes, dark-matter input"); plt.show()
+viz.plot_confusion(m_dense["confusion_matrix"], title="Validation subcubes, dark matter input"); plt.show()
 '''),
     code('''
 fig = viz.compare_slice(sample["dm"], mask, pred_dense, x_mid, field_title="Dark matter, λ = 0.33 h⁻¹ Mpc",
@@ -205,9 +205,7 @@ Real surveys see galaxies, not dark matter. Here the input is only the galaxy fi
 still the T-web computed from the dark matter. I compare three ways to handle it, alongside the
 dark matter model from section 2:
 
-{MODELS_TABLE}
-All models use the same split, training settings and early stopping.
-"""),
+{MODELS_TABLE}"""),
     code('''
 preds, scores = {}, {}
 for name in ("subhalo_curriculum", "subhalo_from_scratch"):
@@ -257,7 +255,6 @@ plt.show()
 
 Links: [paper (arXiv:2504.21134)](https://arxiv.org/abs/2504.21134) ·
 [research code](https://github.com/skumagai3/deepvoid_misc) ·
-[DV_NEW rewrite](https://github.com/skumagai3/DV_NEW) ·
 [how the demo models were trained](train_demo_models.ipynb)
 """),
 ]
@@ -281,8 +278,8 @@ both on validation loss.
 
 This notebook trains the models once for every input normalization option (and, optionally, with and
 without overlapping training subcubes), shows a comparison table, and publishes the configuration you
-choose. Use a GPU runtime (Runtime → Change runtime type → GPU). One configuration took 2.7 minutes
-on a Colab GPU without overlap; with overlap, epochs are about 3.6× longer. The last cell downloads
+choose. Use a GPU runtime (Runtime → Change runtime type → GPU); how long it takes depends on the GPU.
+Overlapping subcubes make each epoch longer. The last cell downloads
 `deepvoid_demo_outputs.zip`.
 """),
     code(f'''
@@ -452,8 +449,8 @@ curriculum vs. training from scratch, bigger than the run-to-run noise?
 
 It retrains the three models several times with the published settings (min-max normalization,
 overlapping training subcubes) and the same training/validation split, changing only the training
-seed (weight initialization and shuffling). Each seed takes about 4 minutes on a Colab GPU; the default
-5 seeds take about 20 minutes. Use a GPU runtime. The last cell downloads `seed_study_outputs.zip`.
+seed (weight initialization and shuffling). The default is 5 seeds, each of which retrains all three
+models, so use a GPU runtime. The last cell downloads `seed_study_outputs.zip`.
 """),
     TRAIN[1],
     code('''

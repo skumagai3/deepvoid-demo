@@ -32,8 +32,8 @@ dense halos, which is where galaxies form.
 Voids are worth studying for a few reasons:
 
 - Dark energy. Dense regions collapsed under their own gravity long before dark energy came to dominate
-  the universe's expansion, so voids are the part of the cosmic web that dark energy has shaped most. To a first approximation, the
-  accelerating expansion of the universe is the voids expanding and pushing the dense structures apart.
+  the universe's expansion, so voids are the part of the cosmic web that dark energy has shaped most.
+  To a first approximation, the accelerating expansion of the universe is the voids expanding and pushing the dense structures apart.
   Voids are also round on average, so if their shapes look stretched or squashed along our line of sight,
   the assumptions we used to turn redshifts into distances are off (the Alcock–Paczyński test).
 - Gravity. Many alternatives to general relativity are built so that their effects stay hidden in dense
@@ -57,7 +57,8 @@ Instead of tuning another finder, I used a definition based on the physics that 
 the T-web ([Hahn et al. 2007](https://arxiv.org/abs/astro-ph/0610280)). The idea is that gravity doesn't
 just pull matter toward dense regions, it also stretches and squeezes it differently in different
 directions. A region being squeezed along one direction is collapsing into a wall, along two into a
-filament, and along all three into a halo. A region being stretched in every direction is a void. The
+filament, and along all three into a halo. A region being stretched (or only barely squeezed) in every
+direction is a void. The
 tidal tensor measures that squeezing.
 
 To compute it, I put the dark matter particles on a grid to get the density contrast δ = ρ/ρ̄ − 1 and
@@ -72,7 +73,7 @@ tensor is its matrix of second derivatives:
 $$T_{ij}(\mathbf{x}) = \frac{\partial^2 \Phi(\mathbf{x})}{\partial x_i \, \partial x_j}$$
 
 That's a symmetric 3×3 matrix at every voxel. Its three eigenvalues say how strongly matter is being
-compressed along three perpendicular directions, and they add up to δ. The label is the number of
+compressed along three perpendicular directions, and they add up to the smoothed δ. The label is the number of
 eigenvalues above a threshold λ_th: none is void, one is wall, two is filament, three is halo. I use
 λ_th = 0.65. A threshold of 0 would count any compression at all, even compression too weak to make
 anything collapse within the age of the universe, and only 16% of the volume would come out as void.
@@ -100,9 +101,6 @@ A few things make this harder than it might look:
   voxels contain none. In the paper I used curriculum learning for this: train on dark matter first,
   then adapt to sparser tracers. The demo compares a simplified, one-step version of that with training
   on galaxies from scratch.
-- The validation set has to stay separate from training. The box is cut into 32³ subcubes and split into
-  training and validation before any augmentation, so rotated copies only ever come from training
-  subcubes. All the numbers below are computed on the validation subcubes.
 
 ## Results
 
@@ -117,6 +115,10 @@ A few things make this harder than it might look:
 
 All four are scored against the same T-web labels, which are computed from the full dark matter. For the
 galaxy inputs, that means the network has to infer structure it can't see directly.
+
+To keep validation separate from training, the box is cut into 32³ subcubes and split into training and
+validation before any augmentation, so rotated copies only ever come from training subcubes. All the
+numbers below are computed on the validation subcubes.
 
 ### Scores
 
@@ -185,22 +187,21 @@ regime where pretraining on dense data should help most, and the demo doesn't te
 | `subhalo_from_scratch` | 0.542 | 0.517 | 0.542 | 0.563 | 0.551 | 0.566 |
 | `subhalo_curriculum` | 0.544 | 0.523 | 0.536 | 0.577 | 0.548 | 0.548 |
 
-Training on overlapping subcubes helped in almost every case, presumably because it gives more varied
+Training on overlapping subcubes helped the trained models in almost every case, presumably because it gives more varied
 training data. Changing the normalization or overlap moves the trained models by up to about 0.02 to 0.05
 in MCC. That's larger than the seed-to-seed spread of the published configuration (0.002 to 0.008), so the
 differences are probably real, but they're small and no option is best for every model. Normalization
 matters much more for `subhalo_no_retraining`, since nothing is retrained and everything depends on whether
 the sparse inputs fall in the range the dark matter model was trained on. The published configuration is
 the one with the highest mean validation MCC across the three trained models (see the
-[training notebook](notebooks/train_demo_models.ipynb)). Each configuration takes 3 to 4 minutes to train
-on a Colab GPU.
+[training notebook](notebooks/train_demo_models.ipynb)).
 </details>
 
 ### The full-scale results
 
 The full version of this work is in [Kumagai et al. 2026](https://doi.org/10.3847/1538-4357/ae2c80). On
 the full 512³ TNG300 box, DeepVoid reaches void F1 = 0.96 on dark matter at λ = 0.33 h⁻¹ Mpc, and void
-F1 = 0.89 on galaxies at λ = 10 h⁻¹ Mpc, which is about 27,000 times fewer tracers than the dark matter.
+F1 = 0.89 on galaxies at λ = 10 h⁻¹ Mpc, which is about 28,000 times fewer tracers than the dark matter.
 
 <p align="center">
   <img src="assets/paper_512.png" width="860" alt="Figure from the paper: a slice of the full 512³ TNG300 box showing the dark matter density, the prediction from dark matter at λ = 0.33 h⁻¹ Mpc, the T-web classification, the galaxies within ±2 h⁻¹ Mpc of the slice, and the prediction from galaxies at λ = 10 h⁻¹ Mpc">
@@ -226,11 +227,11 @@ Colab, so its numbers aren't directly comparable with the paper's. The main diff
 
 ## Running it
 
-| Notebook | What it does | Runtime |
+| Notebook | What it does | Runs on |
 |---|---|---|
-| [`deepvoid_demo.ipynb`](notebooks/deepvoid_demo.ipynb) [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/skumagai3/deepvoid-demo/blob/main/notebooks/deepvoid_demo.ipynb) | loads the data and weights, predicts the full box, and shows slices, metrics, model uncertainty, a slice browser and the galaxy comparison | a few minutes on CPU |
-| [`train_demo_models.ipynb`](notebooks/train_demo_models.ipynb) [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/skumagai3/deepvoid-demo/blob/main/notebooks/train_demo_models.ipynb) | retrains the three models in all six configurations, picks one, and regenerates the figures | about 20 minutes on a Colab GPU |
-| [`seed_study.ipynb`](notebooks/seed_study.ipynb) [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/skumagai3/deepvoid-demo/blob/main/notebooks/seed_study.ipynb) | optional: retrains the published configuration with 5 seeds to measure run-to-run noise | about 20 minutes on a Colab GPU |
+| [`deepvoid_demo.ipynb`](notebooks/deepvoid_demo.ipynb) [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/skumagai3/deepvoid-demo/blob/main/notebooks/deepvoid_demo.ipynb) | loads the data and weights, predicts the full box, and shows slices, metrics, model uncertainty, a slice browser and the galaxy comparison | CPU is fine (a few minutes) |
+| [`train_demo_models.ipynb`](notebooks/train_demo_models.ipynb) [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/skumagai3/deepvoid-demo/blob/main/notebooks/train_demo_models.ipynb) | retrains the three models in all six configurations, picks one, and regenerates the figures | GPU |
+| [`seed_study.ipynb`](notebooks/seed_study.ipynb) [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/skumagai3/deepvoid-demo/blob/main/notebooks/seed_study.ipynb) | optional: retrains the published configuration with 5 seeds to measure run-to-run noise | GPU |
 
 To run it locally:
 
@@ -264,7 +265,7 @@ full dark matter   ─► tidal tensor eigenvalues ─► T-web ──┤  label
           score the validation subcubes: void F1, MCC, per-class F1, confusion matrix
 ```
 
-The code in [`dvdemo/`](dvdemo) is about 900 lines:
+The code lives in [`dvdemo/`](dvdemo):
 
 | Module | Role |
 |---|---|
@@ -296,9 +297,8 @@ survey-like geometries. That work is in the research code linked below.
 | `notebooks/` | demo, training and seed study notebooks (generated by `scripts/build_notebooks.py`) | |
 | `scripts/` | `prepare_sample.py` (raw volumes to sample), `make_alignment_figure.py`, `make_architecture_figure.py`, `make_figures.py`, `make_seed_figure.py`, `build_notebooks.py` | |
 
-Related code: [deepvoid_misc](https://github.com/skumagai3/deepvoid_misc) (the original research code
-for the paper) and [DV_NEW](https://github.com/skumagai3/DV_NEW) (a modular rewrite with configs,
-curriculum, attention and FiLM).
+Related code: [deepvoid_misc](https://github.com/skumagai3/deepvoid_misc), the original research code
+for the paper.
 
 ## Citation
 
@@ -335,7 +335,7 @@ side, 625³ dark matter particles), at redshift zero. The dark matter density, t
 the T-web labels in `data/tng300_128.npz` are all derived from it (see the [data card](DATA.md)).
 
 A note for astronomers: the "galaxies" in this demo are the simulation's subhalos (bound clumps of dark
-matter identified within halos), not galaxies. A dark-matter-only run has no gas or stars, so subhalos
+matter identified within halos) rather than true galaxies. A dark-matter-only run has no gas or stars, so subhalos
 aren't a one-to-one match for the galaxies a survey would see, and they don't carry the selection effects
 or galaxy bias of a real sample. For testing whether a network can recover the cosmic web from a sparse
 set of tracers, they're a close enough stand-in.
